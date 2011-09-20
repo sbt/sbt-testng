@@ -13,9 +13,8 @@ public class TestNGFramework implements Framework {
     return "TestNG";
   }
 
-  @Override public Runner testRunner(ClassLoader arg0, Logger[] arg1) {
-    // TODO Auto-generated method stub
-    return null;
+  @Override public Runner testRunner(final ClassLoader testClassLoader, final Logger[] loggers) {
+    return new TestNGRunner(testClassLoader, loggers);
   }
 
   @Override public Fingerprint[] tests() {
