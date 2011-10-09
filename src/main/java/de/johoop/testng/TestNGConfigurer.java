@@ -35,8 +35,6 @@ public class TestNGConfigurer {
   }
 
   private void configureFromTestOptions(final String[] testOptions) {
-    System.out.println("options: " + Arrays.toString(testOptions));
-    
     final CommandLineArgs args = new CommandLineArgs();
     new JCommander(args, testOptions); // yikes again, args is an output parameter of the constructor!
     testNG.configure(args);
