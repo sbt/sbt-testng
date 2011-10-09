@@ -1,7 +1,5 @@
 package de.johoop.testng;
 
-import java.util.Arrays;
-
 import org.testng.CommandLineArgs;
 import org.testng.TestNG;
 
