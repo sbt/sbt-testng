@@ -9,8 +9,9 @@ public abstract class AbstractEvent implements Event {
   private final Throwable error;
 
   AbstractEvent(final ITestResult result) {
+    // I don't think all this information is used by sbt at all... :(
     this.testName = result.getTestClass().getName() + "." + result.getName();
-    this.description = "not available";
+    this.description = "<not available>";
     this.error = result.getThrowable();
   }
   
