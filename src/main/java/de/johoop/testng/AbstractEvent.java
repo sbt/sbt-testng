@@ -1,16 +1,17 @@
 package de.johoop.testng;
 
 import org.scalatools.testing.Event;
-import org.scalatools.testing.Result;
+import org.testng.ITestResult;
 
-public class AbstractEvent implements Event {
-
+public abstract class AbstractEvent implements Event {
   private final String testName;
   private final String description;
+  private final Throwable error;
 
-  AbstractEvent(final String testName, final String description) {
-    this.testName = testName;
-    this.description = description;
+  AbstractEvent(final ITestResult result) {
+    this.testName = result.getTestClass().getName() + "." + result.getName();
+    this.description = "not available";
+    this.error = result.getThrowable();
   }
   
   @Override public String testName() {
@@ -22,13 +23,6 @@ public class AbstractEvent implements Event {
   }
 
   @Override public Throwable error() {
-    // TODO Auto-generated method stub
-    return null;
+    return error;
   }
-
-  @Override public Result result() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
 }
