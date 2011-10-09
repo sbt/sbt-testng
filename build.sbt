@@ -11,3 +11,4 @@ libraryDependencies ++= Seq(
   "org.scala-tools.testing" % "test-interface" % "0.5",
   "org.testng" % "testng" % "6.2.1")
 
+publishArtifact in (Compile, packageDoc) := false

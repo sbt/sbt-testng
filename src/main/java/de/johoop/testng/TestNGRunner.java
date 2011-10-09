@@ -4,21 +4,20 @@ import static java.util.Arrays.asList;
 
 import org.scalatools.testing.EventHandler;
 import org.scalatools.testing.Fingerprint;
-import org.scalatools.testing.Logger;
 import org.scalatools.testing.Runner2;
 import org.testng.TestNG;
 
 public class TestNGRunner extends Runner2 {
 
   private final ClassLoader testClassLoader;
-  private final Logger[] loggers;
+  private final TestNGLogger logger;
 
   private static final Object lock = new Object();
   private static boolean alreadyRunning = false;
   
-  TestNGRunner(ClassLoader testClassLoader, Logger[] loggers) {
+  TestNGRunner(ClassLoader testClassLoader, TestNGLogger testNGLogger) {
     this.testClassLoader = testClassLoader;
-    this.loggers = loggers;
+    this.logger = testNGLogger;
   }
   
   @Override
@@ -38,7 +37,11 @@ public class TestNGRunner extends Runner2 {
     final TestNG testNG = new TestNG();
     testNG.addClassLoader(testClassLoader);
     testNG.setTestSuites(asList("testng.yaml"));
-    testNG.run(); // TODO hook into this somehow
+    
+    final EventDispatcher dispatcher = new EventDispatcher(eventHandler, logger); 
+    testNG.addListener(dispatcher);
+    
+    testNG.run();
 
     System.out.println("finished TestNG test run."); // FIXME remove me
 }
