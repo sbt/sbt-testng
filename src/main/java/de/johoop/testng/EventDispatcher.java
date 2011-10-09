@@ -7,11 +7,9 @@ import org.testng.TestListenerAdapter;
 public class EventDispatcher extends TestListenerAdapter {
 
   private final EventHandler eventHandler;
-  private final TestNGLogger logger;
 
-  EventDispatcher(final EventHandler eventHandler, final TestNGLogger logger) {
+  EventDispatcher(final EventHandler eventHandler) {
     this.eventHandler = eventHandler;
-    this.logger = logger;
   }
   
   @Override

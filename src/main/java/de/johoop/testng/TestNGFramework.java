@@ -14,7 +14,7 @@ public class TestNGFramework implements Framework {
   }
 
   @Override public Runner testRunner(final ClassLoader testClassLoader, final Logger[] loggers) {
-    return new TestNGRunner(testClassLoader, new TestNGLogger(loggers));
+    return new TestNGRunner(testClassLoader);
   }
 
   @Override public Fingerprint[] tests() {
