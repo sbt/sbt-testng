@@ -4,6 +4,10 @@ import org.scalatools.testing.EventHandler;
 import org.testng.ITestResult;
 import org.testng.TestListenerAdapter;
 
+import de.johoop.testng.events.TestFailureEvent;
+import de.johoop.testng.events.TestSkipEvent;
+import de.johoop.testng.events.TestSuccessEvent;
+
 public class EventDispatcher extends TestListenerAdapter {
 
   private final EventHandler eventHandler;

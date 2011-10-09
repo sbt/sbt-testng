@@ -1,4 +1,4 @@
-package de.johoop.testng;
+package de.johoop.testng.events;
 
 import org.scalatools.testing.Event;
 import org.testng.ITestResult;

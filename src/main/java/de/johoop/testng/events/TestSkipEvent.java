@@ -1,11 +1,11 @@
-package de.johoop.testng;
+package de.johoop.testng.events;
 
 import org.scalatools.testing.Result;
 import org.testng.ITestResult;
 
 public class TestSkipEvent extends AbstractEvent {
 
-  TestSkipEvent(ITestResult result) {
+  public TestSkipEvent(ITestResult result) {
     super(result);
   }
 

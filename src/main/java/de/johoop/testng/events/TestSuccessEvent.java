@@ -1,11 +1,11 @@
-package de.johoop.testng;
+package de.johoop.testng.events;
 
 import org.scalatools.testing.Result;
 import org.testng.ITestResult;
 
 public class TestSuccessEvent extends AbstractEvent {
 
-  TestSuccessEvent(ITestResult result) {
+  public TestSuccessEvent(ITestResult result) {
     super(result);
   }
 
