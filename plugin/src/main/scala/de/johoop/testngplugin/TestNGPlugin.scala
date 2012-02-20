@@ -1,4 +1,4 @@
-package de.johoop.testnginterface
+package de.johoop.testngplugin
 
 import sbt._
 import sbt.Keys._
@@ -9,7 +9,9 @@ object TestNGPlugin extends Plugin with Keys {
     testNGOutputDirectory <<= (crossTarget)(path => (path / "testng").absolutePath),
     testNGSuites <<= (resourceDirectory in Test)(path => Seq((path / "testng.yaml").absolutePath)),
 
-    libraryDependencies <+= (testNGVersion)("org.testng" % "testng" % _ % "test->default"),
+    libraryDependencies <++= (testNGVersion)(v => Seq(
+      "org.testng" % "testng" % v % "test->default",
+      "de.johoop" % "sbt-testng-interface" % "2.0.0-SNAPSHOT")),
     
     testFrameworks += TestNGFrameworkID,
 
@@ -17,7 +19,7 @@ object TestNGPlugin extends Plugin with Keys {
       Tests.Argument(TestNGFrameworkID, "-d", out, suites mkString " ")
     })
     
-  object TestNGFrameworkID extends TestFramework("de.johoop.testnginterface.TestNGFramework") { 
+  object TestNGFrameworkID extends TestFramework("de.johoop.testnginterface.TestNGFramework") {
     override def toString = "TestNG"
   }
 }

@@ -2,11 +2,11 @@ syntax: regexp
 
 ^\.history$
 ^\.target$
-^\.classpath$
-^\.project$
+^(plugin/)?\.classpath$
+^(plugin/)?\.project$
 ^bin$
-^\.settings$
-^target$
+^(plugin/)?\.settings$
+^(plugin/)?target$
 ^\.scala_dependencies$
 ^lib/
 ^project/boot$
@@ -14,4 +14,4 @@ syntax: regexp
 ^project/project$
 ^project/plugins/project$
 ^project/plugins/target$
-^\.cache$
+^(plugin/)?\.cache$

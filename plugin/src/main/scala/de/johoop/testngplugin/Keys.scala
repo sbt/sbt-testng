@@ -1,4 +1,4 @@
-package de.johoop.testnginterface
+package de.johoop.testngplugin
 
 import sbt._
 import Keys._
