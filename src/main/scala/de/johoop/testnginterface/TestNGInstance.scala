@@ -7,20 +7,20 @@ import org.testng.TestNG
 
 import com.beust.jcommander.JCommander
 
-class ConfiguredTestNG {
-  def loadingClassesFrom(testClassLoader: ClassLoader): ConfiguredTestNG = {
+class TestNGInstance {
+  def loadingClassesFrom(testClassLoader: ClassLoader): TestNGInstance = {
     ConfigurableTestNG addClassLoader testClassLoader
-    this
+    TestNGInstance.this
   }
   
-  def using(testOptions: Array[String]): ConfiguredTestNG = {
+  def using(testOptions: Array[String]): TestNGInstance = {
     configureFrom(testOptions:_*)
-    this
+    TestNGInstance.this
   }
   
-  def forwardingEventsTo(eventHandler: EventHandler): ConfiguredTestNG = {
+  def forwardingEventsTo(eventHandler: EventHandler): TestNGInstance = {
     ConfigurableTestNG addListener (Forwarder to eventHandler)
-    this
+    TestNGInstance.this
   }
   
   private def configureFrom(testOptions: String*) {
@@ -33,6 +33,6 @@ class ConfiguredTestNG {
     override def configure(args: CommandLineArgs) = super.configure(args)
   }
 }
-object ConfiguredTestNG {
-  def start(testNG: ConfiguredTestNG): Unit = testNG.ConfigurableTestNG.run 
+object TestNGInstance {
+  def start(testNG: TestNGInstance): Unit = testNG.ConfigurableTestNG.run 
 }
