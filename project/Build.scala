@@ -2,7 +2,7 @@ import sbt._
 import sbt.Keys._
 import com.typesafe.sbteclipse.plugin.EclipsePlugin.EclipseKeys
 
-object TestBenchPluginsBuild extends Build {
+object TestNGPluginBuild extends Build {
   lazy val root = Project(
     id = "sbt-testng-interface",
     base = file("."),
