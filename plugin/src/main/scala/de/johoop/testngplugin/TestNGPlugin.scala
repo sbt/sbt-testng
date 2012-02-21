@@ -33,6 +33,7 @@ object TestNGPlugin extends Plugin with Keys {
   def testNGSettings: Seq[Setting[_]] = Seq(
     testNGVersion := "6.4",
     testNGOutputDirectory <<= (crossTarget)(path => (path / "testng").absolutePath),
+    testNGParameters := Seq(),
     testNGSuites <<= (resourceDirectory in Test)(path => Seq((path / "testng.yaml").absolutePath)),
 
     libraryDependencies <++= (testNGVersion)(v => Seq(
