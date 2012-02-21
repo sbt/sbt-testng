@@ -20,15 +20,13 @@ class EventRecorder extends TestListenerAdapter {
     val className = result.getTestClass.getName
     
     basket synchronized {
-      println("storing " + event + " for " + className)
-      basket.put(className, event :: basket.getOrElse(className, List.empty))
+      basket.put(className, event :: basket.getOrElse(className, Nil))
     }
   }
   
   def replayTo(sbt: EventHandler, className: String): Unit = eventsFor(className) foreach sbt.handle
   
   private[this] def eventsFor(className: String): List[Event] = basket synchronized {
-    println("replaying " + (basket getOrElse (className, List.empty)) + " for " + className)
-    basket remove className getOrElse List.empty
+    basket remove className getOrElse Nil
   }
 }
