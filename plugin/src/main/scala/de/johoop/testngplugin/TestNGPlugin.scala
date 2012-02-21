@@ -41,8 +41,8 @@ object TestNGPlugin extends Plugin with Keys {
     
     testFrameworks += TestNGFrameworkID,
 
-    testOptions <+= (testNGOutputDirectory, testNGSuites) map { (out, suites) => 
-      Tests.Argument(TestNGFrameworkID, ("-d" +: out +: suites):_*)
+    testOptions <+= (testNGOutputDirectory, testNGParameters, testNGSuites) map { (out, params, suites) => 
+      Tests.Argument(TestNGFrameworkID, (("-d" +: out +: params) ++ suites):_*)
     })
     
   object TestNGFrameworkID extends TestFramework("de.johoop.testnginterface.TestNGFramework") {

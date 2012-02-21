@@ -37,6 +37,10 @@ trait Keys {
   val testNGOutputDirectory = SettingKey[String](
     "testng-output-directory", 
     "the directory where the test results will be written to by TestNG")
+  
+  val testNGParameters = SettingKey[Seq[String]](
+    "testng-parameters", 
+    "additional parameters to TestNG")
     
   val testNGSuites = SettingKey[Seq[String]](
     "testng-suites", 
