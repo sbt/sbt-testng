@@ -37,12 +37,12 @@ object TestNGPlugin extends Plugin with Keys {
 
     libraryDependencies <++= (testNGVersion)(v => Seq(
       "org.testng" % "testng" % v % "test->default",
-      "de.johoop" % "sbt-testng-interface" % "2.0.0-SNAPSHOT")),
+      "de.johoop" %% "sbt-testng-interface" % "2.0.0-SNAPSHOT" % "test")),
     
     testFrameworks += TestNGFrameworkID,
 
     testOptions <+= (testNGOutputDirectory, testNGSuites) map { (out, suites) => 
-      Tests.Argument(TestNGFrameworkID, "-d", out, suites mkString " ")
+      Tests.Argument(TestNGFrameworkID, ("-d" +: out +: suites):_*)
     })
     
   object TestNGFrameworkID extends TestFramework("de.johoop.testnginterface.TestNGFramework") {
