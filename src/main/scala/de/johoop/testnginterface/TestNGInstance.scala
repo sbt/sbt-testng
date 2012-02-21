@@ -40,19 +40,15 @@ class TestNGInstance {
   }
   
   def using(testOptions: Array[String]): TestNGInstance = {
-    configureFrom(testOptions:_*)
+    val args = new CommandLineArgs()
+    new JCommander(args, testOptions:_*) // args is an output parameter of the constructor!
+    ConfigurableTestNG configure args
     TestNGInstance.this
   }
   
   def forwardingEventsTo(eventHandler: EventHandler): TestNGInstance = {
     ConfigurableTestNG addListener (Forwarder to eventHandler)
     TestNGInstance.this
-  }
-  
-  private def configureFrom(testOptions: String*) {
-    val args = new CommandLineArgs()
-    new JCommander(args, testOptions:_*) // args is an output parameter of the constructor!
-    ConfigurableTestNG configure args
   }
   
   private object ConfigurableTestNG extends TestNG { // the TestNG method we need is protected
