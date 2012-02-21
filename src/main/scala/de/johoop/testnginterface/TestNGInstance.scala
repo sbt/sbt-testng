@@ -27,13 +27,14 @@
 package de.johoop.testnginterface
 
 import org.scalatools.testing.EventHandler
+import org.scalatools.testing.Logger
 
 import org.testng.CommandLineArgs
 import org.testng.TestNG
 
 import com.beust.jcommander.JCommander
 
-class TestNGInstance {
+class TestNGInstance private (loggers: Array[Logger]) {
   def loadingClassesFrom(testClassLoader: ClassLoader): TestNGInstance = {
     ConfigurableTestNG addClassLoader testClassLoader
     TestNGInstance.this
@@ -46,8 +47,8 @@ class TestNGInstance {
     TestNGInstance.this
   }
   
-  def forwardingEventsTo(eventHandler: EventHandler): TestNGInstance = {
-    ConfigurableTestNG addListener (Forwarder to eventHandler)
+  def storingEventsIn(basket: EventRecorder): TestNGInstance = {
+    ConfigurableTestNG addListener basket
     TestNGInstance.this
   }
   
@@ -57,4 +58,5 @@ class TestNGInstance {
 }
 object TestNGInstance {
   def start(testNG: TestNGInstance): Unit = testNG.ConfigurableTestNG.run 
+  def loggingTo(loggers: Array[Logger]) = new TestNGInstance(loggers)
 }

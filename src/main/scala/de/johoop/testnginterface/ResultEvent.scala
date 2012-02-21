@@ -31,14 +31,11 @@ import org.scalatools.testing.Result
 import Result._
 import org.testng.ITestResult
 
-sealed abstract class AbstractEvent(val result: Result) extends Event {
-  def testName = testNGResult getName
-  def description = testName
-  def error = testNGResult getThrowable
-  
-  def testNGResult: ITestResult
-}
+case class ResultEvent(val result: Result, val testName: String, val description: String, val error: Throwable) extends Event
 
-case class FailureEvent(testNGResult: ITestResult) extends AbstractEvent(Failure)
-case class SkipEvent(testNGResult: ITestResult) extends AbstractEvent(Skipped)
-case class SuccessEvent(testNGResult: ITestResult) extends AbstractEvent(Success)
+object ResultEvent {
+  def failure(result: ITestResult) = event(Failure, result)
+  def skipped(result: ITestResult) = event(Skipped, result)
+  def success(result: ITestResult) = event(Success, result)
+  private[this] def event(result: Result, testNGResult: ITestResult) = apply(result, testNGResult getName, testNGResult getName, testNGResult getThrowable)
+}

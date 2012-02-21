@@ -34,6 +34,7 @@ import java.util.concurrent.Semaphore
 
 class TestNGFramework extends Framework {
   val name = "TestNG"
-  def testRunner(testClassLoader: ClassLoader, loggers: Array[Logger]) = new TestNGRunner(testClassLoader, loggers)
+  def testRunner(testClassLoader: ClassLoader, loggers: Array[Logger]) = new TestNGRunner(testClassLoader, loggers, sharedState)
   val tests = Array[Fingerprint](AllClassesFingerprint)
+  private val sharedState = new TestRunState 
 }
