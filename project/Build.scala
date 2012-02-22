@@ -7,7 +7,7 @@ object TestNGPluginBuild extends Build {
     id = "sbt-testng-interface",
     base = file("."),
     settings = Project.defaultSettings ++ commonSettings ++ Seq(
-      version := "2.0.0-SNAPSHOT",
+      version := "2.0.0",
       crossScalaVersions := Seq("2.8.0", "2.8.1", "2.9.0", "2.9.1"),
       libraryDependencies ++= Seq(
         "org.scala-tools.testing" % "test-interface" % "0.5" % "provided",
@@ -19,7 +19,7 @@ object TestNGPluginBuild extends Build {
     base = file("plugin"),
     settings = Project.defaultSettings ++ commonSettings ++ Seq(
       sbtPlugin := true,
-      version := "2.0.0-SNAPSHOT"))
+      version := "2.0.0"))
 
   override def settings = super.settings ++ Seq(EclipseKeys.skipParents in ThisBuild := false)
 
