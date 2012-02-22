@@ -26,7 +26,6 @@ object TestNGPluginBuild extends Build {
   lazy val commonSettings: Seq[Setting[_]] = publishSettings ++ Seq(
     organization := "de.johoop",
     scalaVersion := "2.9.1",
-    publishArtifact in (Compile, packageDoc) := false,
     scalacOptions ++= Seq("-unchecked", "-deprecation"))
 
   lazy val publishSettings: Seq[Setting[_]] = Seq(
