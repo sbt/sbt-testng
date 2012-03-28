@@ -32,8 +32,8 @@ import org.testng.TestListenerAdapter
 import collection.mutable.HashMap
 import org.scalatools.testing.EventHandler
 import org.scalatools.testing.Logger
-
 import ResultEvent._
+import org.scalatools.testing.Result
 
 class EventRecorder extends TestListenerAdapter {
   private[this] val basket = HashMap.empty[String, List[Event]]
@@ -50,7 +50,14 @@ class EventRecorder extends TestListenerAdapter {
     }
   }
   
-  def replayTo(sbt: EventHandler, className: String): Unit = eventsFor(className) foreach sbt.handle
+  def replayTo(sbt: EventHandler, className: String, loggers: Array[Logger]): Unit = {
+    val events = eventsFor(className) 
+    if (events exists (e => e.result == Result.Failure || e.result == Result.Error)) {
+      loggers foreach { l => l.error("Test failed: " + className) }
+    }
+    
+    events foreach sbt.handle
+  }
   
   private[this] def eventsFor(className: String): List[Event] = basket synchronized {
     basket remove className getOrElse Nil

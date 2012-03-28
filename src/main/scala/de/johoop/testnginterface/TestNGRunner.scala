@@ -38,7 +38,7 @@ class TestNGRunner(testClassLoader: ClassLoader, loggers: Array[Logger], state: 
   import state._
   
   def run(testClassname: String, fingerprint: Fingerprint, eventHandler: EventHandler, testOptions: Array[String]) = {
-    loggers foreach (_.info("running for " + testClassname))
+    loggers foreach (_.debug("running for " + testClassname))
     
     if (permissionToExecute tryAcquire) {
       start(TestNGInstance loggingTo loggers
@@ -51,6 +51,6 @@ class TestNGRunner(testClassLoader: ClassLoader, loggers: Array[Logger], state: 
                            
     testCompletion await
     
-    recorder.replayTo(eventHandler, testClassname)
+    recorder.replayTo(eventHandler, testClassname, loggers)
   }
 }

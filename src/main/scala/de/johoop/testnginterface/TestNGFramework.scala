@@ -27,14 +27,54 @@
 package de.johoop.testnginterface
 
 import org.scalatools.testing.Fingerprint
+import org.scalatools.testing.SubclassFingerprint
 import org.scalatools.testing.Framework
 import org.scalatools.testing.Logger
-
 import java.util.concurrent.Semaphore
+import org.scalatools.testing.AnnotatedFingerprint
 
 class TestNGFramework extends Framework {
   val name = "TestNG"
-  def testRunner(testClassLoader: ClassLoader, loggers: Array[Logger]) = new TestNGRunner(testClassLoader, loggers, sharedState)
-  val tests = Array[Fingerprint](AllClassesFingerprint)
+  
+    def testRunner(testClassLoader: ClassLoader, loggers: Array[Logger]) = new TestNGRunner(testClassLoader, loggers, sharedState)
+  
+  val tests = 
+    classFingerprint("java.lang.Object") ++
+    annotationFingerprint("org.testng.annotations.Test") ++
+    annotationFingerprint("org.testng.annotations.BeforeSuite") ++
+    annotationFingerprint("org.testng.annotations.AfterSuite") ++
+    annotationFingerprint("org.testng.annotations.BeforeTest") ++
+    annotationFingerprint("org.testng.annotations.AfterTest") ++
+    annotationFingerprint("org.testng.annotations.BeforeGroups") ++
+    annotationFingerprint("org.testng.annotations.AfterGroups") ++
+    annotationFingerprint("org.testng.annotations.BeforeClass") ++
+    annotationFingerprint("org.testng.annotations.AfterClass") ++
+    annotationFingerprint("org.testng.annotations.BeforeMethod") ++
+    annotationFingerprint("org.testng.annotations.AfterMethod") ++
+    annotationFingerprint("org.testng.annotations.DataProvider") ++
+    annotationFingerprint("org.testng.annotations.Factory") ++
+    annotationFingerprint("org.testng.annotations.Listeners") ++
+    annotationFingerprint("org.testng.annotations.Parameters") toArray
+    
+  def classFingerprint(name: String): Seq[Fingerprint] = Seq(
+    new SubclassFingerprint {
+      def superClassName = name
+      def isModule = false
+    },
+    new SubclassFingerprint {
+      def superClassName = name
+      def isModule = true
+    })
+    
+  def annotationFingerprint(name: String): Seq[Fingerprint] = Seq(
+    new AnnotatedFingerprint {
+      def annotationName = name
+      def isModule = false
+    },
+    new AnnotatedFingerprint {
+      def annotationName = name
+      def isModule = true
+    })
+
   private val sharedState = new TestRunState 
 }
