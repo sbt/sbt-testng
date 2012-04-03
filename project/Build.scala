@@ -19,7 +19,8 @@ object TestNGPluginBuild extends Build {
     base = file("plugin"),
     settings = Project.defaultSettings ++ commonSettings ++ Seq(
       sbtPlugin := true,
-      version := "2.0.2"))
+      version := "2.0.2",
+      crossScalaVersions := Seq("2.9.1")))
 
   override def settings = super.settings ++ Seq(EclipseKeys.skipParents in ThisBuild := false)
 
