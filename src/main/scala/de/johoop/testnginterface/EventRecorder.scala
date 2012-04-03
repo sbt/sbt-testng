@@ -34,32 +34,22 @@ import org.scalatools.testing.EventHandler
 import org.scalatools.testing.Logger
 import ResultEvent._
 import org.scalatools.testing.Result
+import org.scalatools.testing.Fingerprint
+import org.scalatools.testing.SubclassFingerprint
+import org.testng.ITestContext
 
 class EventRecorder extends TestListenerAdapter {
-  private[this] val basket = HashMap.empty[String, List[Event]]
+  private[this] val basket = HashMap[String, List[Event]]()
   
-  override def onTestFailure(result: ITestResult): Unit = store(failure(result), result)
-  override def onTestSkipped(result: ITestResult): Unit = store(skipped(result), result)
-  override def onTestSuccess(result: ITestResult): Unit = store(success(result), result)
+  override def onTestFailure(result: ITestResult): Unit = store(failure, result)
+  override def onTestSkipped(result: ITestResult): Unit = store(skipped, result)
+  override def onTestSuccess(result: ITestResult): Unit = store(success, result)
   
-  private[this] def store(event: Event, result: ITestResult): Unit = {
-    val className = result.getTestClass.getName
-    
-    basket synchronized {
-      basket.put(className, event :: basket.getOrElse(className, Nil))
-    }
+  private[this] def store(eventFrom: ITestResult => Event, result: ITestResult): Unit = basket synchronized {
+    basket put (classNameOf(result), eventFrom(result) :: basket.getOrElse(classNameOf(result), Nil))
   }
   
-  def replayTo(sbt: EventHandler, className: String, loggers: Array[Logger]): Unit = {
-    val events = eventsFor(className) 
-    if (events exists (e => e.result == Result.Failure || e.result == Result.Error)) {
-      loggers foreach { l => l.error("Test failed: " + className) }
-    }
-    
-    events foreach sbt.handle
-  }
-  
-  private[this] def eventsFor(className: String): List[Event] = basket synchronized {
-    basket remove className getOrElse Nil
-  }
+  def replayTo(sbt: EventHandler, className: String, loggers: Array[Logger]): Unit = basket synchronized {
+    basket remove className getOrElse Nil foreach sbt.handle
+  } 
 }

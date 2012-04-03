@@ -31,8 +31,8 @@ import org.scalatools.testing.Framework
 import org.scalatools.testing.Logger
 import org.scalatools.testing.Runner2
 import org.scalatools.testing.EventHandler
-
 import TestNGInstance.start
+import java.util.concurrent.atomic.AtomicInteger
 
 class TestNGRunner(testClassLoader: ClassLoader, loggers: Array[Logger], state: TestRunState) extends Runner2 {
   import state._

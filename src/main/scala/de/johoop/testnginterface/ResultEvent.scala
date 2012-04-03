@@ -34,8 +34,12 @@ import org.testng.ITestResult
 case class ResultEvent(val result: Result, val testName: String, val description: String, val error: Throwable) extends Event
 
 object ResultEvent {
-  def failure(result: ITestResult) = event(Failure, result)
-  def skipped(result: ITestResult) = event(Skipped, result)
-  def success(result: ITestResult) = event(Success, result)
-  private[this] def event(result: Result, testNGResult: ITestResult) = apply(result, testNGResult getName, testNGResult getName, testNGResult getThrowable)
+  val failure = (result: ITestResult) => event(Failure, result)
+  val skipped = (result: ITestResult) => event(Skipped, result)
+  val success = (result: ITestResult) => event(Success, result)
+  
+  private[this] def event(result: Result, testNGResult: ITestResult) = 
+    ResultEvent(result, classNameOf(testNGResult), testNGResult getName, testNGResult getThrowable)
+    
+  def classNameOf(result: ITestResult) = result.getTestClass.getName
 }
