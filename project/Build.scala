@@ -7,11 +7,11 @@ object TestNGPluginBuild extends Build {
     id = "sbt-testng-interface",
     base = file("."),
     settings = Project.defaultSettings ++ commonSettings ++ Seq(
-      version := "2.0.2",
+      version := "2.0.3",
       crossScalaVersions := Seq("2.8.1", "2.9.0", "2.9.1", "2.9.2"),
       libraryDependencies ++= Seq(
         "org.scala-tools.testing" % "test-interface" % "0.5" % "provided",
-        "org.testng" % "testng" % "6.4" % "provided",
+        "org.testng" % "testng" % "6.7" % "provided",
         "com.google.inject" % "guice" % "2.0" % "provided")))
 
   lazy val testNGPlugin = Project(
@@ -19,14 +19,14 @@ object TestNGPluginBuild extends Build {
     base = file("plugin"),
     settings = Project.defaultSettings ++ commonSettings ++ Seq(
       sbtPlugin := true,
-      version := "2.0.2",
-      crossScalaVersions := Seq("2.9.1")))
+      version := "2.0.3",
+      crossScalaVersions := Seq("2.9.2")))
 
   override def settings = super.settings ++ Seq(EclipseKeys.skipParents in ThisBuild := false)
 
   lazy val commonSettings: Seq[Setting[_]] = publishSettings ++ Seq(
     organization := "de.johoop",
-    scalaVersion := "2.9.1",
+    scalaVersion := "2.9.2",
     scalacOptions ++= Seq("-unchecked", "-deprecation"))
 
   lazy val publishSettings: Seq[Setting[_]] = Seq(

@@ -38,7 +38,7 @@ object TestNGPlugin extends Plugin with Keys {
 
     libraryDependencies <++= (testNGVersion)(v => Seq(
       "org.testng" % "testng" % v % "test->default",
-      "de.johoop" %% "sbt-testng-interface" % "2.0.2" % "test")),
+      "de.johoop" %% "sbt-testng-interface" % "2.0.3" % "test")),
     
     testFrameworks += TestNGFrameworkID,
 
