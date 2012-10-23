@@ -8,7 +8,7 @@ object TestNGPluginBuild extends Build {
     base = file("."),
     settings = Project.defaultSettings ++ commonSettings ++ Seq(
       version := "2.0.3",
-      crossScalaVersions := Seq("2.8.1", "2.9.0", "2.9.1", "2.9.2"),
+      crossScalaVersions := Seq("2.8.1", "2.9.0", "2.9.1", "2.9.2", "2.10.0-RC1"),
       libraryDependencies ++= Seq(
         "org.scala-tools.testing" % "test-interface" % "0.5" % "provided",
         "org.testng" % "testng" % "6.7" % "provided",
