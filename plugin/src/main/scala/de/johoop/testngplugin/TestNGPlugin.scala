@@ -1,4 +1,4 @@
-/* Copyright (c) 2012 Joachim Hofer & contributors.
+/* Copyright (c) 2012, 2013 Joachim Hofer & contributors.
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -23,7 +23,6 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package de.johoop.testngplugin
 
 import sbt._
@@ -32,19 +31,19 @@ import sbt.Keys._
 object TestNGPlugin extends Plugin with Keys {
   def testNGSettings: Seq[Setting[_]] = Seq(
     testNGVersion := "6.7",
-    testNGOutputDirectory <<= (crossTarget)(path => (path / "testng").absolutePath),
+    testNGOutputDirectory := (crossTarget.value / "testng").absolutePath,
     testNGParameters := Seq(),
-    testNGSuites <<= (resourceDirectory in Test)(path => Seq((path / "testng.yaml").absolutePath)),
+    testNGSuites := Seq(((resourceDirectory in Test).value / "testng.yaml").absolutePath),
 
-    libraryDependencies <++= (testNGVersion)(v => Seq(
-      "org.testng" % "testng" % v % "test->default",
+    libraryDependencies ++= Seq(
+      "org.testng" % "testng" % testNGVersion.value % "test->default",
       "de.johoop" %% "sbt-testng-interface" % "2.0.3" % "test")),
     
     testFrameworks += TestNGFrameworkID,
 
-    testOptions <+= (testNGOutputDirectory, testNGParameters, testNGSuites) map { (out, params, suites) => 
-      Tests.Argument(TestNGFrameworkID, (("-d" +: out +: params) ++ suites):_*)
-    })
+    testOptions += 
+      Tests.Argument(TestNGFrameworkID, 
+        (("-d" +: testNGOutputDirectory.value +: testNGParameters.value) ++ testNGSuites.value):_*)
     
   object TestNGFrameworkID extends TestFramework("de.johoop.testnginterface.TestNGFramework") {
     override def toString = "TestNG"
