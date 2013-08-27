@@ -8,10 +8,10 @@ object TestNGPluginBuild extends Build {
     base = file("."),
     settings = Project.defaultSettings ++ commonSettings ++ Seq(
       version := "3.0.0",
-      crossScalaVersions := Seq("2.8.1", "2.9.0", "2.9.1", "2.9.2", "2.10.0", "2.10.1", "2.10.2"),
+      crossScalaVersions := Seq("2.9.3", "2.10.2"),
       libraryDependencies ++= Seq(
-        "org.scala-tools.testing" % "test-interface" % "0.5" % "provided",
-        "org.testng" % "testng" % "6.7" % "provided",
+        "org.scala-sbt" % "test-interface" % "1.0" % "provided",
+        "org.testng" % "testng" % "6.8.5" % "provided",
         "com.google.inject" % "guice" % "2.0" % "provided")))
 
   lazy val testNGPlugin = Project(

@@ -37,13 +37,13 @@ object TestNGPlugin extends Plugin with Keys {
 
     libraryDependencies ++= Seq(
       "org.testng" % "testng" % testNGVersion.value % "test->default",
-      "de.johoop" %% "sbt-testng-interface" % "2.0.3" % "test")),
+      "de.johoop" %% "sbt-testng-interface" % "2.0.3" % "test"),
     
     testFrameworks += TestNGFrameworkID,
 
     testOptions += 
       Tests.Argument(TestNGFrameworkID, 
-        (("-d" +: testNGOutputDirectory.value +: testNGParameters.value) ++ testNGSuites.value):_*)
+        (("-d" +: testNGOutputDirectory.value +: testNGParameters.value) ++ testNGSuites.value):_*))
     
   object TestNGFrameworkID extends TestFramework("de.johoop.testnginterface.TestNGFramework") {
     override def toString = "TestNG"
