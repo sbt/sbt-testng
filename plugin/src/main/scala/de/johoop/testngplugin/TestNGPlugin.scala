@@ -30,14 +30,14 @@ import sbt.Keys._
 
 object TestNGPlugin extends Plugin with Keys {
   def testNGSettings: Seq[Setting[_]] = Seq(
-    testNGVersion := "6.7",
+    testNGVersion := "6.8.5",
     testNGOutputDirectory := (crossTarget.value / "testng").absolutePath,
     testNGParameters := Seq(),
     testNGSuites := Seq(((resourceDirectory in Test).value / "testng.yaml").absolutePath),
 
     libraryDependencies ++= Seq(
       "org.testng" % "testng" % testNGVersion.value % "test->default",
-      "de.johoop" %% "sbt-testng-interface" % "2.0.3" % "test"),
+      "de.johoop" %% "sbt-testng-interface" % "3.0.0" % "test"),
     
     testFrameworks += TestNGFrameworkID,
 
