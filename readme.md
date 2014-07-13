@@ -62,7 +62,7 @@ This also means that executing single tests via**`sbt test-only`** won't work. P
 
 ## License
 
-Copyright (c) 2011-2013 Joachim Hofer & contributors
+Copyright (c) 2011-2014 Joachim Hofer & contributors
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
