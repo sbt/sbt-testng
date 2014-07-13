@@ -30,6 +30,9 @@ import sbt.Keys._
 
 object TestNGPlugin extends Plugin with Keys {
   def testNGSettings: Seq[Setting[_]] = Seq(
+	resolvers += Resolver.url("scala-sbt simple releases", 
+		url("http://repo.scala-sbt.org/scalasbt/simple/sbt-plugin-releases"))(Resolver.ivyStylePatterns), // why is that necessary, and why like that?
+
     testNGVersion := "6.8.8",
     testNGOutputDirectory := (crossTarget.value / "testng").absolutePath,
     testNGParameters := Seq(),
@@ -37,7 +40,8 @@ object TestNGPlugin extends Plugin with Keys {
 
     libraryDependencies ++= Seq(
       "org.testng" % "testng" % testNGVersion.value % "test->default",
-      "de.johoop" %% "sbt-testng-interface" % "3.0.1" % "test"),
+      "org.yaml" % "snakeyaml" % "1.12" % "test",
+      "de.johoop" %% "sbt-testng-interface" % "3.0.2" % "test"),
     
     testFrameworks += TestNGFrameworkID,
 

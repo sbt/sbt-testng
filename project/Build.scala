@@ -6,7 +6,7 @@ object TestNGPluginBuild extends Build {
     id = "sbt-testng-interface",
     base = file("."),
     settings = Project.defaultSettings ++ commonSettings ++ Seq(
-      version := "3.0.1",
+      version := "3.0.2",
       crossScalaVersions := Seq("2.9.3", "2.10.4", "2.11.1"),
       libraryDependencies ++= Seq(
         "org.scala-sbt" % "test-interface" % "1.0" % "provided",
@@ -18,7 +18,7 @@ object TestNGPluginBuild extends Build {
     base = file("plugin"),
     settings = Project.defaultSettings ++ commonSettings ++ Seq(
       sbtPlugin := true,
-      version := "3.0.1",
+      version := "3.0.2",
       crossScalaVersions := Seq("2.10.4"),
       scalacOptions += "-language:_"))
 
