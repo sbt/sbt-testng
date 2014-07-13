@@ -1,4 +1,4 @@
-/* Copyright (c) 2012, 2013 Joachim Hofer & contributors.
+/* Copyright (c) 2012-2014 Joachim Hofer & contributors.
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -30,14 +30,14 @@ import sbt.Keys._
 
 object TestNGPlugin extends Plugin with Keys {
   def testNGSettings: Seq[Setting[_]] = Seq(
-    testNGVersion := "6.8.5",
+    testNGVersion := "6.8.8",
     testNGOutputDirectory := (crossTarget.value / "testng").absolutePath,
     testNGParameters := Seq(),
     testNGSuites := Seq(((resourceDirectory in Test).value / "testng.yaml").absolutePath),
 
     libraryDependencies ++= Seq(
       "org.testng" % "testng" % testNGVersion.value % "test->default",
-      "de.johoop" %% "sbt-testng-interface" % "3.0.0" % "test"),
+      "de.johoop" %% "sbt-testng-interface" % "3.0.1" % "test"),
     
     testFrameworks += TestNGFrameworkID,
 
