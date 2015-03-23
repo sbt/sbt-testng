@@ -33,10 +33,6 @@ import collection.mutable.HashMap
 import org.scalatools.testing.EventHandler
 import org.scalatools.testing.Logger
 import ResultEvent._
-import org.scalatools.testing.Result
-import org.scalatools.testing.Fingerprint
-import org.scalatools.testing.SubclassFingerprint
-import org.testng.ITestContext
 
 class EventRecorder extends TestListenerAdapter {
   private[this] val basket = HashMap[String, List[Event]]()

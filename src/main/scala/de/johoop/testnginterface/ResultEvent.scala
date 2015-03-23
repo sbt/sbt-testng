@@ -31,7 +31,7 @@ import org.scalatools.testing.Result
 import Result._
 import org.testng.ITestResult
 
-case class ResultEvent(val result: Result, val testName: String, val description: String, val error: Throwable) extends Event
+case class ResultEvent(result: Result, testName: String, description: String, error: Throwable) extends Event
 
 object ResultEvent {
   val failure = (result: ITestResult) => event(Failure, result)
@@ -39,7 +39,8 @@ object ResultEvent {
   val success = (result: ITestResult) => event(Success, result)
   
   private[this] def event(result: Result, testNGResult: ITestResult) = 
-    ResultEvent(result, classNameOf(testNGResult), testNGResult getName, testNGResult getThrowable)
+    ResultEvent(result, testNGResult.getName, testNGResult.getName,
+        if (result != Success) testNGResult.getThrowable else null)
     
   def classNameOf(result: ITestResult) = result.getTestClass.getName
 }
