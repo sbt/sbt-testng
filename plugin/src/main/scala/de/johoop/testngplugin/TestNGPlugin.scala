@@ -30,8 +30,7 @@ import sbt.Keys._
 
 object TestNGPlugin extends Plugin with Keys {
   def testNGSettings: Seq[Setting[_]] = Seq(
-	resolvers += Resolver.url("scala-sbt simple releases", 
-		url("http://repo.scala-sbt.org/scalasbt/simple/sbt-plugin-releases"))(Resolver.ivyStylePatterns), // why is that necessary, and why like that?
+	resolvers += Resolver.sbtPluginRepo("releases"), // why is that necessary, and why like that?
 
     testNGVersion := "6.8.8",
     testNGOutputDirectory := (crossTarget.value / "testng").absolutePath,
