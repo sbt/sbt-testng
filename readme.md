@@ -8,12 +8,12 @@ If you're developing in Scala, you can use [Specs2](http://specs2.org) and be ha
 
 Thanks to @asflierl, there is now a convenience sbt plugin which greatly simplifies configuring the testng test interface.
 
-Version 3.0.2 works with sbt 0.13.5.
+Version 3.0.3 works with sbt 0.13.13.
 
 Add the following to your project's `plugins.sbt` file:
 
 ```scala
-addSbtPlugin("de.johoop" % "sbt-testng-plugin" % "3.0.2")
+addSbtPlugin("de.johoop" % "sbt-testng-plugin" % "3.0.3")
 ```
 
 Add the following to your project's `build.sbt` file:
@@ -34,7 +34,7 @@ When done, run your tests in sbt as usual via **`sbt test`**.
 
 * *Description:* Version of TestNG to use for the tests.
 * *Accepts:* `String`
-* *Default:* `"6.8.8"`
+* *Default:* `"6.9.13.6"`
 
 ### `testNGOutputDirectory`
 
@@ -62,7 +62,7 @@ This also means that executing single tests via**`sbt test-only`** won't work. P
 
 ## License
 
-Copyright (c) 2011-2014 Joachim Hofer & contributors
+Copyright (c) 2011-2017 Joachim Hofer & contributors
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
