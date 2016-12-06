@@ -7,7 +7,7 @@ object TestNGPluginBuild extends Build {
   lazy val root = Project(id = "sbt-testng-interface", base = file("."))
     .settings(commonSettings: _*)
     .settings(
-      version := "3.0.2",
+      version := "3.0.3",
       crossScalaVersions := Seq("2.9.3", "2.10.4", "2.11.2"),
       libraryDependencies ++= Seq(
         "org.scala-sbt" % "test-interface" % "1.0" % "provided",
@@ -18,7 +18,7 @@ object TestNGPluginBuild extends Build {
     .settings(commonSettings: _*)
     .settings(
       sbtPlugin := true,
-      version := "3.0.2",
+      version := "3.0.3",
       crossScalaVersions := Seq("2.10.4"),
       scalacOptions += "-language:_")
 

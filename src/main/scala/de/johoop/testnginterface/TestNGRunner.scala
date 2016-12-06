@@ -27,12 +27,10 @@
 package de.johoop.testnginterface
 
 import org.scalatools.testing.Fingerprint
-import org.scalatools.testing.Framework
 import org.scalatools.testing.Logger
 import org.scalatools.testing.Runner2
 import org.scalatools.testing.EventHandler
 import TestNGInstance.start
-import java.util.concurrent.atomic.AtomicInteger
 
 class TestNGRunner(testClassLoader: ClassLoader, loggers: Array[Logger], state: TestRunState) extends Runner2 {
   import state._
@@ -40,16 +38,16 @@ class TestNGRunner(testClassLoader: ClassLoader, loggers: Array[Logger], state: 
   def run(testClassname: String, fingerprint: Fingerprint, eventHandler: EventHandler, testOptions: Array[String]) = {
     loggers foreach (_.debug("running for " + testClassname))
     
-    if (permissionToExecute tryAcquire) {
+    if (permissionToExecute.tryAcquire) {
       start(TestNGInstance loggingTo loggers
                            loadingClassesFrom testClassLoader 
                            using testOptions 
                            storingEventsIn recorder)
                            
-      testCompletion countDown
+      testCompletion.countDown()
     }
                            
-    testCompletion await
+    testCompletion.await()
     
     recorder.replayTo(eventHandler, testClassname, loggers)
   }
