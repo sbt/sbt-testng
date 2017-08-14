@@ -32,7 +32,8 @@ object TestNGPlugin extends Plugin with Keys {
   def testNGSettings: Seq[Setting[_]] = Seq(
 	resolvers += Resolver.sbtPluginRepo("releases"), // why is that necessary, and why like that?
 
-    testNGVersion := "6.9.13.6",
+    testNGVersion := (testNGVersion ?? TestNGPluginBuildInfo.testngVersion).value,
+    testNGInterfaceVersion := (testNGInterfaceVersion ?? TestNGPluginBuildInfo.version).value,
     testNGOutputDirectory := (crossTarget.value / "testng").absolutePath,
     testNGParameters := Seq(),
     testNGSuites := Seq(((resourceDirectory in Test).value / "testng.yaml").absolutePath),
@@ -40,7 +41,7 @@ object TestNGPlugin extends Plugin with Keys {
     libraryDependencies ++= Seq(
       "org.testng" % "testng" % testNGVersion.value % "test->default",
       "org.yaml" % "snakeyaml" % "1.17" % "test",
-      "de.johoop" %% "sbt-testng-interface" % "3.0.3" % "test"),
+      "de.johoop" %% "sbt-testng-interface" % testNGInterfaceVersion.value % "test"),
     
     testFrameworks += TestNGFrameworkID,
 

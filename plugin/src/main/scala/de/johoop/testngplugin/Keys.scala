@@ -44,5 +44,8 @@ trait Keys {
   val testNGSuites = SettingKey[Seq[String]](
     "testng-suites", 
     "the suite definition files (YAML or XML) that will be run by TestNG")
+
+  val testNGInterfaceVersion = SettingKey[String](
+    "testngInterfaceVersion")
 }
 object Keys extends Keys
