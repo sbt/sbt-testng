@@ -1,4 +1,4 @@
-val v = "3.1.1-SNAPSHOT"
+val v = "3.1.1"
 val testngVersion = SettingKey[String]("testngVersion")
 val preCompiledInterfaceVersions = SettingKey[Seq[String]]("preCompiledInterfaceVersions")
 val interfaceName = "sbt-testng-interface"

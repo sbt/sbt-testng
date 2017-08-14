@@ -10,12 +10,12 @@ If you're developing in Scala, you can use [Specs2](http://specs2.org) and be ha
 
 Thanks to @asflierl, there is now a convenience sbt plugin which greatly simplifies configuring the testng test interface.
 
-Version 3.1.0 works with sbt 0.13.5 or higher.
+Version 3.1.1 works with sbt 0.13.5 or higher.
 
 Add the following to your project's `plugins.sbt` file:
 
 ```scala
-addSbtPlugin("de.johoop" % "sbt-testng-plugin" % "3.1.0")
+addSbtPlugin("de.johoop" % "sbt-testng-plugin" % "3.1.1")
 ```
 
 Add the following to your project's `build.sbt` file:
