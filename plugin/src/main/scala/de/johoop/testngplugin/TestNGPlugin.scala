@@ -66,6 +66,8 @@ object TestNGPlugin extends AutoPlugin {
     }
   }
 
+  override def requires = plugins.JvmPlugin
+
   override lazy val projectSettings: Seq[Def.Setting[_]] = Seq(
 	resolvers += Resolver.sbtPluginRepo("releases"), // why is that necessary, and why like that?
 
@@ -80,22 +82,20 @@ object TestNGPlugin extends AutoPlugin {
       "org.yaml" % "snakeyaml" % "1.17" % "test"
     ),
 
-    libraryDependencies ++= {
+    libraryDependencies += {
       if(TestNGPluginBuildInfo.preCompiledInterfaceVersions.contains(scalaBinaryVersion.value)) {
-        Seq(TestNGPluginBuildInfo.organization %% TestNGPluginBuildInfo.interfaceName % testNGInterfaceVersion.value % "test")
+        TestNGPluginBuildInfo.organization %% TestNGPluginBuildInfo.interfaceName % testNGInterfaceVersion.value % "test"
       } else {
-        Nil
+        "org.scala-sbt" % "test-interface" % "1.0" % "test"
       }
     },
 
-    sourceGenerators in Test += {
+    sourceGenerators in Test += Def.task {
+      val dir = (sourceManaged in Test).value
       if(TestNGPluginBuildInfo.preCompiledInterfaceVersions.contains(scalaBinaryVersion.value)) {
-        task(Nil)
+        Nil
       } else {
-        task{
-          val dir = (sourceManaged in Test).value
-          IO.unzipStream(new ByteArrayInputStream(testngSources), dir).toSeq.filter(_.getName endsWith "scala")
-        }
+        IO.unzipStream(new ByteArrayInputStream(testngSources), dir).toList.filter(_.getName endsWith "scala")
       }
     },
 
