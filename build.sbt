@@ -37,13 +37,12 @@ lazy val testNGPlugin = Project(id = "sbt-testng-plugin", base = file("plugin"))
       a => Seq("-Xmx", "-Xms", "-XX", "-Dsbt.log.noformat").exists(a.startsWith)
     ),
     scriptedLaunchOpts += ("-Dplugin.version=" + version.value),
-    crossScalaVersions := Seq("2.10.6"),
     scalacOptions += "-language:_")
 
 lazy val commonSettings: Seq[Setting[_]] = publishSettings ++ Seq(
+  crossSbtVersions := Seq("0.13.16", "1.0.0"),
   organization := "de.johoop",
   testngVersion := "6.11",
-  scalaVersion := "2.10.6",
   scalacOptions ++= Seq("-unchecked", "-deprecation"))
 
 lazy val publishSettings: Seq[Setting[_]] = Seq(

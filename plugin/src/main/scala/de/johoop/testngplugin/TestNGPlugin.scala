@@ -59,7 +59,9 @@ object TestNGPlugin extends AutoPlugin {
     val src = url(s"https://repo.scala-sbt.org/scalasbt/sbt-plugin-releases/${TestNGPluginBuildInfo.organization}/${artifactId}/${TestNGPluginBuildInfo.version}/srcs/${artifactId}-sources.jar")
     IO.withTemporaryDirectory { dir =>
       val f = dir / "temp.jar"
-      IO.download(src, f)
+      sbt.io.Using.urlInputStream(src) { in =>
+        IO.transfer(in, f)
+      }
       IO.readBytes(f)
     }
   }
@@ -107,7 +109,5 @@ object TestNGPlugin extends AutoPlugin {
   @deprecated("will be removed. add `enablePlugins(TestNGPlugin)` in your build.sbt", "3.1.0")
   def testNGSettings: Seq[Setting[_]] = projectSettings
 
-  object TestNGFrameworkID extends TestFramework("de.johoop.testnginterface.TestNGFramework") {
-    override def toString = "TestNG"
-  }
+  lazy val TestNGFrameworkID = new TestFramework("de.johoop.testnginterface.TestNGFramework")
 }

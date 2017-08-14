@@ -2,7 +2,7 @@ language: scala
 sudo: false
 jdk: oraclejdk8
 script:
-- sbt "project sbt-testng-interface" "+ test" "+ publishLocal" "sbt-testng-plugin/test" "sbt-testng-plugin/scripted"
+- sbt "project sbt-testng-interface" "+ test" "+ publishLocal" "project sbt-testng-plugin" "test" "^ scripted"
 before_cache:
   - find $HOME/.sbt -name "*.lock" | xargs rm
   - find $HOME/.ivy2 -name "ivydata-*.properties" | xargs rm
