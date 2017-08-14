@@ -1,7 +1,9 @@
+val v = "3.0.4-SNAPSHOT"
+
 lazy val root = Project(id = "sbt-testng-interface", base = file("."))
   .settings(commonSettings: _*)
   .settings(
-    version := "3.0.3",
+    version := v,
     crossScalaVersions := Seq("2.10.6", "2.11.8", "2.12.1"),
     libraryDependencies ++= Seq(
       "org.scala-sbt" % "test-interface" % "1.0" % "provided",
@@ -11,7 +13,7 @@ lazy val testNGPlugin = Project(id = "sbt-testng-plugin", base = file("plugin"))
   .settings(commonSettings: _*)
   .settings(
     sbtPlugin := true,
-    version := "3.0.3",
+    version := v,
     crossScalaVersions := Seq("2.10.6"),
     scalacOptions += "-language:_")
 
