@@ -28,8 +28,32 @@ package de.johoop.testngplugin
 import sbt._
 import sbt.Keys._
 
-object TestNGPlugin extends Plugin with Keys {
-  def testNGSettings: Seq[Setting[_]] = Seq(
+object TestNGPlugin extends AutoPlugin {
+
+  object autoImport {
+    val testNGVersion = SettingKey[String](
+      "testng-version",
+      "the version of TestNG to use")
+
+    val testNGOutputDirectory = SettingKey[String](
+      "testng-output-directory",
+      "the directory where the test results will be written to by TestNG")
+
+    val testNGParameters = SettingKey[Seq[String]](
+      "testng-parameters",
+      "additional parameters to TestNG")
+
+    val testNGSuites = SettingKey[Seq[String]](
+      "testng-suites",
+      "the suite definition files (YAML or XML) that will be run by TestNG")
+
+    val testNGInterfaceVersion = SettingKey[String](
+      "testngInterfaceVersion")
+  }
+
+  import autoImport._
+
+  override lazy val projectSettings: Seq[Def.Setting[_]] = Seq(
 	resolvers += Resolver.sbtPluginRepo("releases"), // why is that necessary, and why like that?
 
     testNGVersion := (testNGVersion ?? TestNGPluginBuildInfo.testngVersion).value,
@@ -42,14 +66,17 @@ object TestNGPlugin extends Plugin with Keys {
       "org.testng" % "testng" % testNGVersion.value % "test->default",
       "org.yaml" % "snakeyaml" % "1.17" % "test",
       "de.johoop" %% "sbt-testng-interface" % testNGInterfaceVersion.value % "test"),
-    
+
     testFrameworks += TestNGFrameworkID,
 
     testOptions += Tests.Argument(
       TestNGFrameworkID, ("-d" +: testNGOutputDirectory.value +: testNGParameters.value) ++ testNGSuites.value :_*
     )
   )
-    
+
+  @deprecated("will be removed. add `enablePlugins(TestNGPlugin)` in your build.sbt", "3.1.0")
+  def testNGSettings: Seq[Setting[_]] = projectSettings
+
   object TestNGFrameworkID extends TestFramework("de.johoop.testnginterface.TestNGFramework") {
     override def toString = "TestNG"
   }
