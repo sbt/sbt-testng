@@ -4,7 +4,7 @@ lazy val root = Project(id = "sbt-testng-interface", base = file("."))
   .settings(commonSettings: _*)
   .settings(
     version := v,
-    crossScalaVersions := Seq("2.10.6", "2.11.11", "2.12.3"),
+    crossScalaVersions := Seq("2.10.6", "2.11.11", "2.12.3", "2.13.0-M2"),
     libraryDependencies ++= Seq(
       "org.scala-sbt" % "test-interface" % "1.0" % "provided",
       "org.testng" % "testng" % "6.9.13.6" % "provided"))
