@@ -30,7 +30,7 @@ lazy val testNGPlugin = Project(id = "sbt-testng-plugin", base = file("plugin"))
 
 lazy val commonSettings: Seq[Setting[_]] = publishSettings ++ Seq(
   organization := "de.johoop",
-  testngVersion := "6.9.13.6",
+  testngVersion := "6.11",
   scalaVersion := "2.10.6",
   scalacOptions ++= Seq("-unchecked", "-deprecation"))
 
