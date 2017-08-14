@@ -1,9 +1,12 @@
 val v = "3.0.4-SNAPSHOT"
 val testngVersion = SettingKey[String]("testngVersion")
+val preCompiledInterfaceVersions = SettingKey[Seq[String]]("preCompiledInterfaceVersions")
+val interfaceName = "sbt-testng-interface"
 
-lazy val root = Project(id = "sbt-testng-interface", base = file("."))
+lazy val root = Project(id = interfaceName, base = file("."))
   .settings(commonSettings: _*)
   .settings(
+    name := interfaceName,
     version := v,
     crossScalaVersions := Seq("2.10.6", "2.11.11", "2.12.3", "2.13.0-M2"),
     libraryDependencies ++= Seq(
@@ -15,7 +18,16 @@ lazy val testNGPlugin = Project(id = "sbt-testng-plugin", base = file("plugin"))
   .settings(scriptedSettings)
   .settings(commonSettings: _*)
   .settings(
-    buildInfoKeys := Seq[BuildInfoKey](version, testngVersion),
+    preCompiledInterfaceVersions := (crossScalaVersions in root).value.map(
+      CrossVersion.binaryScalaVersion(_)
+    ),
+    buildInfoKeys := Seq[BuildInfoKey](
+      organization,
+      version,
+      testngVersion,
+      preCompiledInterfaceVersions,
+      "interfaceName" -> interfaceName
+    ),
     buildInfoObject := "TestNGPluginBuildInfo",
     buildInfoPackage := "de.johoop.testngplugin",
     sbtPlugin := true,

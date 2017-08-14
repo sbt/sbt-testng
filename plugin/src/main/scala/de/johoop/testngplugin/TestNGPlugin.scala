@@ -25,6 +25,7 @@
  */
 package de.johoop.testngplugin
 
+import java.io.ByteArrayInputStream
 import sbt._
 import sbt.Keys._
 
@@ -53,6 +54,16 @@ object TestNGPlugin extends AutoPlugin {
 
   import autoImport._
 
+  private[this] lazy val testngSources: Array[Byte] = {
+    val artifactId = TestNGPluginBuildInfo.interfaceName + "_2.12"
+    val src = url(s"https://repo.scala-sbt.org/scalasbt/sbt-plugin-releases/${TestNGPluginBuildInfo.organization}/${artifactId}/${TestNGPluginBuildInfo.version}/srcs/${artifactId}-sources.jar")
+    IO.withTemporaryDirectory { dir =>
+      val f = dir / "temp.jar"
+      IO.download(src, f)
+      IO.readBytes(f)
+    }
+  }
+
   override lazy val projectSettings: Seq[Def.Setting[_]] = Seq(
 	resolvers += Resolver.sbtPluginRepo("releases"), // why is that necessary, and why like that?
 
@@ -64,8 +75,27 @@ object TestNGPlugin extends AutoPlugin {
 
     libraryDependencies ++= Seq(
       "org.testng" % "testng" % testNGVersion.value % "test->default",
-      "org.yaml" % "snakeyaml" % "1.17" % "test",
-      "de.johoop" %% "sbt-testng-interface" % testNGInterfaceVersion.value % "test"),
+      "org.yaml" % "snakeyaml" % "1.17" % "test"
+    ),
+
+    libraryDependencies ++= {
+      if(TestNGPluginBuildInfo.preCompiledInterfaceVersions.contains(scalaBinaryVersion.value)) {
+        Seq(TestNGPluginBuildInfo.organization %% TestNGPluginBuildInfo.interfaceName % testNGInterfaceVersion.value % "test")
+      } else {
+        Nil
+      }
+    },
+
+    sourceGenerators in Test += {
+      if(TestNGPluginBuildInfo.preCompiledInterfaceVersions.contains(scalaBinaryVersion.value)) {
+        task(Nil)
+      } else {
+        task{
+          val dir = (sourceManaged in Test).value
+          IO.unzipStream(new ByteArrayInputStream(testngSources), dir).toSeq.filter(_.getName endsWith "scala")
+        }
+      }
+    },
 
     testFrameworks += TestNGFrameworkID,
 
