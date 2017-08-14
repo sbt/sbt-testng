@@ -1,5 +1,7 @@
 # sbt-testng-interface - Testing via TestNG in sbt
 
+[![Build Status](https://travis-ci.org/sbt/sbt-testng.svg?branch=master)](https://travis-ci.org/sbt/sbt-testng)
+
 This is an implementation of the [sbt test interface](https://github.com/sbt/test-interface) for testing with **[TestNG](http://testng.org)**.
 
 If you're developing in Scala, you can use [Specs2](http://specs2.org) and be happy. However, if you're sentenced to Java, TestNG is a very good alternative to JUnit.
