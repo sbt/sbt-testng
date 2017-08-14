@@ -46,9 +46,9 @@ lazy val commonSettings: Seq[Setting[_]] = publishSettings ++ Seq(
   scalacOptions ++= Seq("-unchecked", "-deprecation"))
 
 lazy val publishSettings: Seq[Setting[_]] = Seq(
-  bintrayOrganization := None,
-  bintrayRepository := "sbt-plugins",
-  bintrayPackage := name.value,
+  bintrayOrganization := Some("sbt"),
+  bintrayRepository := "sbt-plugin-releases",
+  bintrayPackage := "sbt-testng-plugin-imported",
   publishArtifact in Test := false,
   publishMavenStyle := false,
   licenses += ("BSD", url("http://opensource.org/licenses/BSD-3-Clause"))
