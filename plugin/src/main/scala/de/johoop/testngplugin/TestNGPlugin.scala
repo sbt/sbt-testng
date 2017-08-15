@@ -25,31 +25,89 @@
  */
 package de.johoop.testngplugin
 
+import java.io.ByteArrayInputStream
 import sbt._
 import sbt.Keys._
 
-object TestNGPlugin extends Plugin with Keys {
-  def testNGSettings: Seq[Setting[_]] = Seq(
+object TestNGPlugin extends AutoPlugin {
+
+  object autoImport {
+    val testNGVersion = SettingKey[String](
+      "testng-version",
+      "the version of TestNG to use")
+
+    val testNGOutputDirectory = SettingKey[String](
+      "testng-output-directory",
+      "the directory where the test results will be written to by TestNG")
+
+    val testNGParameters = SettingKey[Seq[String]](
+      "testng-parameters",
+      "additional parameters to TestNG")
+
+    val testNGSuites = SettingKey[Seq[String]](
+      "testng-suites",
+      "the suite definition files (YAML or XML) that will be run by TestNG")
+
+    val testNGInterfaceVersion = SettingKey[String](
+      "testngInterfaceVersion")
+  }
+
+  import autoImport._
+
+  private[this] lazy val testngSources: Array[Byte] = {
+    val artifactId = TestNGPluginBuildInfo.interfaceName + "_2.12"
+    val src = url(s"https://repo.scala-sbt.org/scalasbt/sbt-plugin-releases/${TestNGPluginBuildInfo.organization}/${artifactId}/${TestNGPluginBuildInfo.version}/srcs/${artifactId}-sources.jar")
+    IO.withTemporaryDirectory { dir =>
+      val f = dir / "temp.jar"
+      sbt.io.Using.urlInputStream(src) { in =>
+        IO.transfer(in, f)
+      }
+      IO.readBytes(f)
+    }
+  }
+
+  override def requires = plugins.JvmPlugin
+
+  override lazy val projectSettings: Seq[Def.Setting[_]] = Seq(
 	resolvers += Resolver.sbtPluginRepo("releases"), // why is that necessary, and why like that?
 
-    testNGVersion := "6.9.13.6",
+    testNGVersion := (testNGVersion ?? TestNGPluginBuildInfo.testngVersion).value,
+    testNGInterfaceVersion := (testNGInterfaceVersion ?? TestNGPluginBuildInfo.version).value,
     testNGOutputDirectory := (crossTarget.value / "testng").absolutePath,
     testNGParameters := Seq(),
     testNGSuites := Seq(((resourceDirectory in Test).value / "testng.yaml").absolutePath),
 
     libraryDependencies ++= Seq(
       "org.testng" % "testng" % testNGVersion.value % "test->default",
-      "org.yaml" % "snakeyaml" % "1.17" % "test",
-      "de.johoop" %% "sbt-testng-interface" % "3.0.3" % "test"),
-    
+      "org.yaml" % "snakeyaml" % "1.17" % "test"
+    ),
+
+    libraryDependencies += {
+      if(TestNGPluginBuildInfo.preCompiledInterfaceVersions.contains(scalaBinaryVersion.value)) {
+        TestNGPluginBuildInfo.organization %% TestNGPluginBuildInfo.interfaceName % testNGInterfaceVersion.value % "test"
+      } else {
+        "org.scala-sbt" % "test-interface" % "1.0" % "test"
+      }
+    },
+
+    sourceGenerators in Test += Def.task {
+      val dir = (sourceManaged in Test).value
+      if(TestNGPluginBuildInfo.preCompiledInterfaceVersions.contains(scalaBinaryVersion.value)) {
+        Nil
+      } else {
+        IO.unzipStream(new ByteArrayInputStream(testngSources), dir).toList.filter(_.getName endsWith "scala")
+      }
+    },
+
     testFrameworks += TestNGFrameworkID,
 
     testOptions += Tests.Argument(
       TestNGFrameworkID, ("-d" +: testNGOutputDirectory.value +: testNGParameters.value) ++ testNGSuites.value :_*
     )
   )
-    
-  object TestNGFrameworkID extends TestFramework("de.johoop.testnginterface.TestNGFramework") {
-    override def toString = "TestNG"
-  }
+
+  @deprecated("will be removed. add `enablePlugins(TestNGPlugin)` in your build.sbt", "3.1.0")
+  def testNGSettings: Seq[Setting[_]] = projectSettings
+
+  lazy val TestNGFrameworkID = new TestFramework("de.johoop.testnginterface.TestNGFramework")
 }

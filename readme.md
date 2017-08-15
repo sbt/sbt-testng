@@ -1,5 +1,7 @@
 # sbt-testng-interface - Testing via TestNG in sbt
 
+[![Build Status](https://travis-ci.org/sbt/sbt-testng.svg?branch=master)](https://travis-ci.org/sbt/sbt-testng)
+
 This is an implementation of the [sbt test interface](https://github.com/sbt/test-interface) for testing with **[TestNG](http://testng.org)**.
 
 If you're developing in Scala, you can use [Specs2](http://specs2.org) and be happy. However, if you're sentenced to Java, TestNG is a very good alternative to JUnit.
@@ -8,20 +10,18 @@ If you're developing in Scala, you can use [Specs2](http://specs2.org) and be ha
 
 Thanks to @asflierl, there is now a convenience sbt plugin which greatly simplifies configuring the testng test interface.
 
-Version 3.0.3 works with sbt 0.13.13.
+Version 3.1.1 works with sbt 0.13.5 or higher.
 
 Add the following to your project's `plugins.sbt` file:
 
 ```scala
-addSbtPlugin("de.johoop" % "sbt-testng-plugin" % "3.0.3")
+addSbtPlugin("de.johoop" % "sbt-testng-plugin" % "3.1.1")
 ```
 
 Add the following to your project's `build.sbt` file:
 
 ```scala
-import de.johoop.testngplugin.TestNGPlugin._
-
-testNGSettings
+enablePlugins(TestNGPlugin)
 ```
 
 You can configure TestNG via the settings keys below.
@@ -34,7 +34,7 @@ When done, run your tests in sbt as usual via **`sbt test`**.
 
 * *Description:* Version of TestNG to use for the tests.
 * *Accepts:* `String`
-* *Default:* `"6.9.13.6"`
+* *Default:* `"6.11"`
 
 ### `testNGOutputDirectory`
 
