@@ -50,6 +50,10 @@ object TestNGPlugin extends AutoPlugin {
 
     val testNGInterfaceVersion = SettingKey[String](
       "testngInterfaceVersion")
+
+    val testNGSnakeyamlVersion = SettingKey[String](
+      "testngSnakeyamlVersion",
+      "the version of Snakeyaml to use")
   }
 
   import autoImport._
@@ -72,6 +76,7 @@ object TestNGPlugin extends AutoPlugin {
 	resolvers += Resolver.sbtPluginRepo("releases"), // why is that necessary, and why like that?
 
     testNGVersion := (testNGVersion ?? TestNGPluginBuildInfo.testngVersion).value,
+    testNGSnakeyamlVersion := (testNGSnakeyamlVersion ?? "1.17").value,
     testNGInterfaceVersion := (testNGInterfaceVersion ?? TestNGPluginBuildInfo.version).value,
     testNGOutputDirectory := (crossTarget.value / "testng").absolutePath,
     testNGParameters := Seq(),
@@ -79,7 +84,7 @@ object TestNGPlugin extends AutoPlugin {
 
     libraryDependencies ++= Seq(
       "org.testng" % "testng" % testNGVersion.value % "test->default",
-      "org.yaml" % "snakeyaml" % "1.17" % "test"
+      "org.yaml" % "snakeyaml" % testNGSnakeyamlVersion.value % "test"
     ),
 
     libraryDependencies += {
