@@ -1,6 +1,6 @@
-/* Copyright (c) 2012-2014 Joachim Hofer & contributors.
+/* Copyright (c) 2018 Joachim Hofer & contributors.
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
@@ -11,7 +11,7 @@
  *    documentation and/or other materials provided with the distribution.
  * 3. The names of the author(s) may not be used to endorse or promote products
  *    derived from this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR(S) ``AS IS'' AND ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
@@ -29,7 +29,7 @@ import java.io.ByteArrayInputStream
 import sbt._
 import sbt.Keys._
 
-object TestNGPlugin extends BaseTestNGPlugin {
+object TestNGItPlugin extends BaseTestNGPlugin {
 
   import autoImport._
 
@@ -41,24 +41,24 @@ object TestNGPlugin extends BaseTestNGPlugin {
     testNGInterfaceVersion := (testNGInterfaceVersion ?? TestNGPluginBuildInfo.version).value,
     testNGOutputDirectory := (crossTarget.value / "testng").absolutePath,
     testNGParameters := Seq(),
-    testNGSuites := Seq(((resourceDirectory in Test).value / "testng.yaml").absolutePath),
+    testNGSuites := Seq(((resourceDirectory in IntegrationTest).value / "testng.yaml").absolutePath),
 
     libraryDependencies ++= Seq(
-      "org.testng" % "testng" % testNGVersion.value % "test->default",
-      "org.yaml" % "snakeyaml" % testNGSnakeyamlVersion.value % "test"
+      "org.testng" % "testng" % testNGVersion.value % "test,it",
+      "org.yaml" % "snakeyaml" % testNGSnakeyamlVersion.value % "test,it"
     ),
 
     libraryDependencies += {
-      if(TestNGPluginBuildInfo.preCompiledInterfaceVersions.contains(scalaBinaryVersion.value)) {
-        TestNGPluginBuildInfo.organization %% TestNGPluginBuildInfo.interfaceName % testNGInterfaceVersion.value % "test"
+      if (TestNGPluginBuildInfo.preCompiledInterfaceVersions.contains(scalaBinaryVersion.value)) {
+        TestNGPluginBuildInfo.organization %% TestNGPluginBuildInfo.interfaceName % testNGInterfaceVersion.value % "test,it"
       } else {
-        "org.scala-sbt" % "test-interface" % "1.0" % "test"
+        "org.scala-sbt" % "test-interface" % "1.0" % "test,it"
       }
     },
 
-    sourceGenerators in Test += Def.task {
-      val dir = (sourceManaged in Test).value
-      if(TestNGPluginBuildInfo.preCompiledInterfaceVersions.contains(scalaBinaryVersion.value)) {
+    sourceGenerators in IntegrationTest += Def.task {
+      val dir = (sourceManaged in IntegrationTest).value
+      if (TestNGPluginBuildInfo.preCompiledInterfaceVersions.contains(scalaBinaryVersion.value)) {
         Nil
       } else {
         IO.unzipStream(new ByteArrayInputStream(testngSources), dir).toList.filter(_.getName endsWith "scala")
@@ -68,12 +68,10 @@ object TestNGPlugin extends BaseTestNGPlugin {
     testFrameworks += TestNGFrameworkID,
 
     testOptions += Tests.Argument(
-      TestNGFrameworkID, ("-d" +: testNGOutputDirectory.value +: testNGParameters.value) ++ testNGSuites.value :_*
+      TestNGFrameworkID, ("-d" +: testNGOutputDirectory.value +: testNGParameters.value) ++ testNGSuites.value: _*
     )
   )
 
-  @deprecated("will be removed. add `enablePlugins(TestNGPlugin)` in your build.sbt", "3.1.0")
-  def testNGSettings: Seq[Setting[_]] = projectSettings
-
   lazy val TestNGFrameworkID = new TestFramework("de.johoop.testnginterface.TestNGFramework")
+
 }
