@@ -1,12 +1,14 @@
+dist: bionic
 language: scala
 sudo: false
-jdk: oraclejdk8
+jdk:
+  - openjdk8
 script:
-- sbt "project sbt-testng-interface" "+ test" "+ publishLocal" "project sbt-testng-plugin" "test" "^ scripted"
+  - sbt "project sbt-testng-interface" "++ test" "++ publishLocal" "project sbt-testng-plugin" "test" "^ scripted"
 before_cache:
   - find $HOME/.sbt -name "*.lock" | xargs rm
   - find $HOME/.ivy2 -name "ivydata-*.properties" | xargs rm
 cache:
   directories:
-  - $HOME/.ivy2/cache
-  - $HOME/.sbt/launchers
+    - $HOME/.ivy2/cache
+    - $HOME/.sbt/launchers

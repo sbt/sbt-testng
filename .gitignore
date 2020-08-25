@@ -1,4 +1,6 @@
 .cache
+.metals/
+.vscode/
 .history
 .target
 .classpath
