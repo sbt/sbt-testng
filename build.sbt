@@ -8,14 +8,14 @@ lazy val root = Project(id = interfaceName, base = file("."))
   .settings(
     name := interfaceName,
     version := v,
-    crossScalaVersions := Seq("2.10.6", "2.11.11", "2.12.3", "2.13.0-M2"),
+    crossScalaVersions := Seq("2.11.12", "2.12.12", "2.13.3"),
     libraryDependencies ++= Seq(
       "org.scala-sbt" % "test-interface" % "1.0" % "provided",
       "org.testng" % "testng" % testngVersion.value % "provided"))
 
 lazy val testNGPlugin = Project(id = "sbt-testng-plugin", base = file("plugin"))
   .enablePlugins(BuildInfoPlugin)
-  .settings(scriptedSettings)
+  .enablePlugins(SbtPlugin)
   .settings(commonSettings: _*)
   .settings(
     preCompiledInterfaceVersions := (crossScalaVersions in root).value.map(
@@ -40,9 +40,9 @@ lazy val testNGPlugin = Project(id = "sbt-testng-plugin", base = file("plugin"))
     scalacOptions += "-language:_")
 
 lazy val commonSettings: Seq[Setting[_]] = publishSettings ++ Seq(
-  crossSbtVersions := Seq("0.13.17", "1.0.0"),
+  crossSbtVersions := Seq("0.13.18", "1.0.4", "1.1.6", "1.2.8", "1.3.13", "1.4.1"),
   organization := "de.johoop",
-  testngVersion := "6.11",
+  testngVersion := "7.3.0",
   scalacOptions ++= Seq("-unchecked", "-deprecation"))
 
 lazy val publishSettings: Seq[Setting[_]] = Seq(
