@@ -24,39 +24,23 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package de.johoop.testnginterface
+package com.github.sbt.testnginterface
 
-import org.scalatools.testing.EventHandler
-import org.scalatools.testing.Logger
+import org.scalatools.testing.Event
+import org.scalatools.testing.Result
+import Result._
+import org.testng.ITestResult
 
-import org.testng.CommandLineArgs
-import org.testng.TestNG
+case class ResultEvent(result: Result, testName: String, description: String, error: Throwable) extends Event
 
-import com.beust.jcommander.JCommander
-
-class TestNGInstance private (loggers: Array[Logger]) {
-  def loadingClassesFrom(testClassLoader: ClassLoader): TestNGInstance = {
-    ConfigurableTestNG addClassLoader testClassLoader
-    TestNGInstance.this
-  }
+object ResultEvent {
+  val failure = (result: ITestResult) => event(Failure, result)
+  val skipped = (result: ITestResult) => event(Skipped, result)
+  val success = (result: ITestResult) => event(Success, result)
   
-  def using(testOptions: Array[String]): TestNGInstance = {
-    val args = new CommandLineArgs()
-    new JCommander(args, testOptions:_*) // args is an output parameter of the constructor!
-    ConfigurableTestNG configure args
-    TestNGInstance.this
-  }
-  
-  def storingEventsIn(basket: EventRecorder): TestNGInstance = {
-    ConfigurableTestNG addListener basket
-    TestNGInstance.this
-  }
-  
-  private object ConfigurableTestNG extends TestNG { // the TestNG method we need is protected
-    override def configure(args: CommandLineArgs) = super.configure(args)
-  }
-}
-object TestNGInstance {
-  def start(testNG: TestNGInstance): Unit = testNG.ConfigurableTestNG.run 
-  def loggingTo(loggers: Array[Logger]) = new TestNGInstance(loggers)
+  private[this] def event(result: Result, testNGResult: ITestResult) = 
+    ResultEvent(result, testNGResult.getName, testNGResult.getName,
+        if (result != Success) testNGResult.getThrowable else null)
+    
+  def classNameOf(result: ITestResult) = result.getTestClass.getName
 }

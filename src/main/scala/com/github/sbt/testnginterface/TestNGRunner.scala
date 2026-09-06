@@ -24,13 +24,31 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package de.johoop.testnginterface
+package com.github.sbt.testnginterface
 
-import java.util.concurrent.Semaphore
-import java.util.concurrent.CountDownLatch
+import org.scalatools.testing.Fingerprint
+import org.scalatools.testing.Logger
+import org.scalatools.testing.Runner2
+import org.scalatools.testing.EventHandler
+import TestNGInstance.start
 
-class TestRunState {
-  val permissionToExecute = new Semaphore(1)
-  val testCompletion = new CountDownLatch(1)
-  val recorder = new EventRecorder
+class TestNGRunner(testClassLoader: ClassLoader, loggers: Array[Logger], state: TestRunState) extends Runner2 {
+  import state._
+  
+  def run(testClassname: String, fingerprint: Fingerprint, eventHandler: EventHandler, testOptions: Array[String]) = {
+    loggers foreach (_.debug("running for " + testClassname))
+    
+    if (permissionToExecute.tryAcquire) {
+      start(TestNGInstance loggingTo loggers
+                           loadingClassesFrom testClassLoader 
+                           using testOptions 
+                           storingEventsIn recorder)
+                           
+      testCompletion.countDown()
+    }
+                           
+    testCompletion.await()
+    
+    recorder.replayTo(eventHandler, testClassname, loggers)
+  }
 }

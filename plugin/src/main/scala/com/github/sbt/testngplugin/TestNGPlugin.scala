@@ -23,7 +23,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package de.johoop.testngplugin
+package com.github.sbt.testngplugin
 
 import java.io.ByteArrayInputStream
 import sbt._
@@ -110,8 +110,5 @@ object TestNGPlugin extends AutoPlugin {
     )
   )
 
-  @deprecated("will be removed. add `enablePlugins(TestNGPlugin)` in your build.sbt", "3.1.0")
-  def testNGSettings: Seq[Setting[_]] = projectSettings
-
-  lazy val TestNGFrameworkID = new TestFramework("de.johoop.testnginterface.TestNGFramework")
+  lazy val TestNGFrameworkID = new TestFramework("com.github.sbt.testnginterface.TestNGFramework")
 }

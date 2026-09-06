@@ -7,7 +7,7 @@ val scala213 = "2.13.18"
 val repoSlug = "sbt/sbt-testng"
 
 ThisBuild / licenses += ("BSD", url("http://opensource.org/licenses/BSD-3-Clause"))
-ThisBuild / organization := "de.johoop"
+ThisBuild / organization := "com.github.sbt"
 ThisBuild / scalacOptions ++= Seq("-unchecked", "-deprecation")
 ThisBuild / testngVersion := "6.11"
 ThisBuild / scalaVersion := scala212
@@ -37,7 +37,7 @@ lazy val `sbt-testng-plugin` = (project in file("plugin"))
       "interfaceName" -> interfaceName
     ),
     buildInfoObject := "TestNGPluginBuildInfo",
-    buildInfoPackage := "de.johoop.testngplugin",
+    buildInfoPackage := "com.github.sbt.testngplugin",
     version := v,
     scriptedBufferLog := false,
     scriptedLaunchOpts ++= sys.process.javaVmArguments.filter(
