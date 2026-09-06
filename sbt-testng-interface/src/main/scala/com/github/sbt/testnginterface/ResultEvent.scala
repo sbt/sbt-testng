@@ -37,10 +37,10 @@ object ResultEvent {
   val failure = (result: ITestResult) => event(Failure, result)
   val skipped = (result: ITestResult) => event(Skipped, result)
   val success = (result: ITestResult) => event(Success, result)
-  
-  private[this] def event(result: Result, testNGResult: ITestResult) = 
+
+  private def event(result: Result, testNGResult: ITestResult) = 
     ResultEvent(result, testNGResult.getName, testNGResult.getName,
         if (result != Success) testNGResult.getThrowable else null)
-    
+
   def classNameOf(result: ITestResult) = result.getTestClass.getName
 }

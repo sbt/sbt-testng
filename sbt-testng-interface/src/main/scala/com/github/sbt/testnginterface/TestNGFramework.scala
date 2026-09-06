@@ -27,20 +27,22 @@
 package com.github.sbt.testnginterface
 
 import org.scalatools.testing.Fingerprint
-import org.scalatools.testing.SubclassFingerprint
 import org.scalatools.testing.Framework
 import org.scalatools.testing.Logger
+import org.scalatools.testing.Runner
+import org.scalatools.testing.SubclassFingerprint
 import java.util.concurrent.Semaphore
 import org.scalatools.testing.AnnotatedFingerprint
 
 class TestNGFramework extends Framework {
   val name = "TestNG"
-    
+
   val tests = Array[Fingerprint](Annotated("org.testng.annotations.Test"))
-  
-  def testRunner(testClassLoader: ClassLoader, loggers: Array[Logger]) = new TestNGRunner(testClassLoader, loggers, sharedState)
-  
-  private[this] val sharedState = new TestRunState
+
+  def testRunner(testClassLoader: ClassLoader, loggers: Array[Logger]): Runner =
+    new TestNGRunner(testClassLoader, loggers, sharedState)
+
+  private val sharedState = new TestRunState
 }
 
 case class Annotated(annotationName: String, isModule: Boolean = false) extends AnnotatedFingerprint

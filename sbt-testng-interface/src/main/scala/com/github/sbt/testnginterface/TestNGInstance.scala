@@ -26,29 +26,37 @@
 
 package com.github.sbt.testnginterface
 
-import org.scalatools.testing.Fingerprint
-import org.scalatools.testing.Logger
-import org.scalatools.testing.Runner2
 import org.scalatools.testing.EventHandler
-import TestNGInstance.start
+import org.scalatools.testing.Logger
 
-class TestNGRunner(testClassLoader: ClassLoader, loggers: Array[Logger], state: TestRunState) extends Runner2 {
-  import state._
-  
-  def run(testClassname: String, fingerprint: Fingerprint, eventHandler: EventHandler, testOptions: Array[String]) = {
-    loggers foreach (_.debug("running for " + testClassname))
-    
-    if (permissionToExecute.tryAcquire) {
-      start(TestNGInstance loggingTo loggers
-                           loadingClassesFrom testClassLoader 
-                           using testOptions 
-                           storingEventsIn recorder)
-                           
-      testCompletion.countDown()
-    }
-                           
-    testCompletion.await()
-    
-    recorder.replayTo(eventHandler, testClassname, loggers)
+import org.testng.CommandLineArgs
+import org.testng.TestNG
+
+import com.beust.jcommander.JCommander
+
+class TestNGInstance private (loggers: Array[Logger]) {
+  def loadingClassesFrom(testClassLoader: ClassLoader): TestNGInstance = {
+    ConfigurableTestNG addClassLoader testClassLoader
+    TestNGInstance.this
   }
+
+  def withOptions(testOptions: Array[String]): TestNGInstance = {
+    val args = new CommandLineArgs()
+    new JCommander(args, testOptions:_*) // args is an output parameter of the constructor!
+    ConfigurableTestNG configure args
+    TestNGInstance.this
+  }
+
+  def storingEventsIn(basket: EventRecorder): TestNGInstance = {
+    ConfigurableTestNG.addListener(basket)
+    TestNGInstance.this
+  }
+
+  private object ConfigurableTestNG extends TestNG { // the TestNG method we need is protected
+    override def configure(args: CommandLineArgs) = super.configure(args)
+  }
+}
+object TestNGInstance {
+  def start(testNG: TestNGInstance): Unit = testNG.ConfigurableTestNG.run 
+  def loggingTo(loggers: Array[Logger]) = new TestNGInstance(loggers)
 }

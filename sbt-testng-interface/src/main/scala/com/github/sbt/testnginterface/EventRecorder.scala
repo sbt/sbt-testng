@@ -26,37 +26,26 @@
 
 package com.github.sbt.testnginterface
 
+import org.scalatools.testing.Event
+import org.testng.ITestResult
+import org.testng.TestListenerAdapter
+import collection.mutable.HashMap
 import org.scalatools.testing.EventHandler
 import org.scalatools.testing.Logger
+import ResultEvent._
 
-import org.testng.CommandLineArgs
-import org.testng.TestNG
+class EventRecorder extends TestListenerAdapter {
+  private val basket = HashMap[String, List[Event]]()
 
-import com.beust.jcommander.JCommander
+  override def onTestFailure(result: ITestResult): Unit = store(failure, result)
+  override def onTestSkipped(result: ITestResult): Unit = store(skipped, result)
+  override def onTestSuccess(result: ITestResult): Unit = store(success, result)
 
-class TestNGInstance private (loggers: Array[Logger]) {
-  def loadingClassesFrom(testClassLoader: ClassLoader): TestNGInstance = {
-    ConfigurableTestNG addClassLoader testClassLoader
-    TestNGInstance.this
+  private def store(eventFrom: ITestResult => Event, result: ITestResult): Unit = basket synchronized {
+    basket put (classNameOf(result), eventFrom(result) :: basket.getOrElse(classNameOf(result), Nil))
   }
-  
-  def using(testOptions: Array[String]): TestNGInstance = {
-    val args = new CommandLineArgs()
-    new JCommander(args, testOptions:_*) // args is an output parameter of the constructor!
-    ConfigurableTestNG configure args
-    TestNGInstance.this
+
+  def replayTo(sbt: EventHandler, className: String, loggers: Array[Logger]): Unit = basket synchronized {
+    basket remove className getOrElse Nil foreach sbt.handle
   }
-  
-  def storingEventsIn(basket: EventRecorder): TestNGInstance = {
-    ConfigurableTestNG addListener basket
-    TestNGInstance.this
-  }
-  
-  private object ConfigurableTestNG extends TestNG { // the TestNG method we need is protected
-    override def configure(args: CommandLineArgs) = super.configure(args)
-  }
-}
-object TestNGInstance {
-  def start(testNG: TestNGInstance): Unit = testNG.ConfigurableTestNG.run 
-  def loggingTo(loggers: Array[Logger]) = new TestNGInstance(loggers)
 }

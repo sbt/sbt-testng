@@ -26,39 +26,29 @@
 package com.github.sbt.testngplugin
 
 import java.io.ByteArrayInputStream
-import sbt._
-import sbt.Keys._
+import sbt.*
+import sbt.Keys.*
 
 object TestNGPlugin extends AutoPlugin {
 
   object autoImport {
-    val testNGVersion = SettingKey[String](
-      "testng-version",
+    val testNGVersion = settingKey[String](
       "the version of TestNG to use")
-
-    val testNGOutputDirectory = SettingKey[String](
-      "testng-output-directory",
+    val testNGOutputDirectory = settingKey[String](
       "the directory where the test results will be written to by TestNG")
-
-    val testNGParameters = SettingKey[Seq[String]](
-      "testng-parameters",
+    val testNGParameters = settingKey[Seq[String]](
       "additional parameters to TestNG")
-
-    val testNGSuites = SettingKey[Seq[String]](
-      "testng-suites",
+    val testNGSuites = settingKey[Seq[String]](
       "the suite definition files (YAML or XML) that will be run by TestNG")
-
-    val testNGInterfaceVersion = SettingKey[String](
+    val testNGInterfaceVersion = settingKey[String](
       "testngInterfaceVersion")
-
-    val testNGSnakeyamlVersion = SettingKey[String](
-      "testngSnakeyamlVersion",
+    val testNGSnakeyamlVersion = settingKey[String](
       "the version of Snakeyaml to use")
   }
 
-  import autoImport._
+  import autoImport.*
 
-  private[this] lazy val testngSources: Array[Byte] = {
+  private lazy val testngSources: Array[Byte] = {
     sys.error("unsupported")
     // val artifactId = TestNGPluginBuildInfo.interfaceName + "_2.12"
     // val src = url(s"https://repo.scala-sbt.org/scalasbt/sbt-plugin-releases/${TestNGPluginBuildInfo.organization}/${artifactId}/${TestNGPluginBuildInfo.version}/srcs/${artifactId}-sources.jar")
@@ -73,40 +63,43 @@ object TestNGPlugin extends AutoPlugin {
 
   override def requires = plugins.JvmPlugin
 
-  override lazy val projectSettings: Seq[Def.Setting[_]] = Seq(
-    testNGVersion := (testNGVersion ?? TestNGPluginBuildInfo.testngVersion).value,
-    testNGSnakeyamlVersion := (testNGSnakeyamlVersion ?? "1.17").value,
-    testNGInterfaceVersion := (testNGInterfaceVersion ?? TestNGPluginBuildInfo.version).value,
-    testNGOutputDirectory := (crossTarget.value / "testng").absolutePath,
+  override lazy val globalSettings: Seq[Def.Setting[?]] = Seq(
+    testNGVersion := TestNGPluginBuildInfo.testngVersion,
+    testNGSnakeyamlVersion := "1.17",
+    testNGInterfaceVersion := TestNGPluginBuildInfo.version,
     testNGParameters := Seq(),
-    testNGSuites := Seq(((resourceDirectory in Test).value / "testng.yaml").absolutePath),
+  )
+
+  override lazy val projectSettings: Seq[Def.Setting[?]] = Seq(
+    testNGOutputDirectory := (crossTarget.value / "testng").absolutePath,
+    testNGSuites := Seq(((Test / resourceDirectory).value / "testng.yaml").absolutePath),
 
     libraryDependencies ++= Seq(
       "org.testng" % "testng" % testNGVersion.value % "test->default",
-      "org.yaml" % "snakeyaml" % testNGSnakeyamlVersion.value % "test"
+      "org.yaml" % "snakeyaml" % testNGSnakeyamlVersion.value % Test
     ),
 
     libraryDependencies += {
-      if(TestNGPluginBuildInfo.preCompiledInterfaceVersions.contains(scalaBinaryVersion.value)) {
+      if (TestNGPluginBuildInfo.preCompiledInterfaceVersions.contains(scalaBinaryVersion.value)) {
         TestNGPluginBuildInfo.organization %% TestNGPluginBuildInfo.interfaceName % testNGInterfaceVersion.value % "test"
       } else {
-        "org.scala-sbt" % "test-interface" % "1.0" % "test"
+        "org.scala-sbt" % "test-interface" % "1.0" % Test
       }
     },
 
-    sourceGenerators in Test += Def.task {
-      val dir = (sourceManaged in Test).value
-      if(TestNGPluginBuildInfo.preCompiledInterfaceVersions.contains(scalaBinaryVersion.value)) {
+    Test / sourceGenerators += Def.task {
+      val dir = (Test / sourceManaged).value
+      if (TestNGPluginBuildInfo.preCompiledInterfaceVersions.contains(scalaBinaryVersion.value)) {
         Nil
       } else {
-        IO.unzipStream(new ByteArrayInputStream(testngSources), dir).toList.filter(_.getName endsWith "scala")
+        IO.unzipStream(new ByteArrayInputStream(testngSources), dir).toSeq.filter(_.getName.endsWith("scala"))
       }
-    },
+    }.taskValue,
 
     testFrameworks += TestNGFrameworkID,
 
     testOptions += Tests.Argument(
-      TestNGFrameworkID, ("-d" +: testNGOutputDirectory.value +: testNGParameters.value) ++ testNGSuites.value :_*
+      TestNGFrameworkID, (("-d" +: testNGOutputDirectory.value +: testNGParameters.value) ++ testNGSuites.value)*
     )
   )
 

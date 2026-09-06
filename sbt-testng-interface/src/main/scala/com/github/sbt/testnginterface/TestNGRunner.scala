@@ -26,26 +26,28 @@
 
 package com.github.sbt.testnginterface
 
-import org.scalatools.testing.Event
-import org.testng.ITestResult
-import org.testng.TestListenerAdapter
-import collection.mutable.HashMap
-import org.scalatools.testing.EventHandler
+import org.scalatools.testing.Fingerprint
 import org.scalatools.testing.Logger
-import ResultEvent._
+import org.scalatools.testing.Runner2
+import org.scalatools.testing.EventHandler
+import TestNGInstance.start
 
-class EventRecorder extends TestListenerAdapter {
-  private[this] val basket = HashMap[String, List[Event]]()
-  
-  override def onTestFailure(result: ITestResult): Unit = store(failure, result)
-  override def onTestSkipped(result: ITestResult): Unit = store(skipped, result)
-  override def onTestSuccess(result: ITestResult): Unit = store(success, result)
-  
-  private[this] def store(eventFrom: ITestResult => Event, result: ITestResult): Unit = basket synchronized {
-    basket put (classNameOf(result), eventFrom(result) :: basket.getOrElse(classNameOf(result), Nil))
+class TestNGRunner(testClassLoader: ClassLoader, loggers: Array[Logger], state: TestRunState) extends Runner2 {
+  import state._
+
+  def run(testClassname: String, fingerprint: Fingerprint, eventHandler: EventHandler, testOptions: Array[String]) = {
+    loggers foreach (_.debug("running for " + testClassname))
+
+    if (permissionToExecute.tryAcquire) {
+      start(TestNGInstance.loggingTo(loggers)
+                          .loadingClassesFrom(testClassLoader)
+                          .withOptions(testOptions)
+                          .storingEventsIn(recorder))
+      testCompletion.countDown()
+    }
+
+    testCompletion.await()
+
+    recorder.replayTo(eventHandler, testClassname, loggers)
   }
-  
-  def replayTo(sbt: EventHandler, className: String, loggers: Array[Logger]): Unit = basket synchronized {
-    basket remove className getOrElse Nil foreach sbt.handle
-  } 
 }
