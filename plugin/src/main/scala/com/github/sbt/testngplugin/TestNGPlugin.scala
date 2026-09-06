@@ -65,7 +65,7 @@ object TestNGPlugin extends AutoPlugin {
 
   override lazy val globalSettings: Seq[Def.Setting[?]] = Seq(
     testNGVersion := TestNGPluginBuildInfo.testngVersion,
-    testNGSnakeyamlVersion := "1.17",
+    testNGSnakeyamlVersion := "2.2",
     testNGInterfaceVersion := TestNGPluginBuildInfo.version,
     testNGParameters := Seq(),
   )
