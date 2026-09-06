@@ -2,23 +2,31 @@ val v = "3.1.2-SNAPSHOT"
 val testngVersion = SettingKey[String]("testngVersion")
 val preCompiledInterfaceVersions = SettingKey[Seq[String]]("preCompiledInterfaceVersions")
 val interfaceName = "sbt-testng-interface"
+val scala212 = "2.12.21"
+val scala213 = "2.13.18"
+val repoSlug = "sbt/sbt-testng"
 
-lazy val root = Project(id = interfaceName, base = file("."))
-  .settings(commonSettings: _*)
+ThisBuild / licenses += ("BSD", url("http://opensource.org/licenses/BSD-3-Clause"))
+ThisBuild / organization := "de.johoop"
+ThisBuild / scalacOptions ++= Seq("-unchecked", "-deprecation")
+ThisBuild / testngVersion := "6.11"
+ThisBuild / scalaVersion := scala212
+ThisBuild / dynverSonatypeSnapshots := true
+
+lazy val `sbt-testng-interface` = (project in file("."))
   .settings(
     name := interfaceName,
     version := v,
-    crossScalaVersions := Seq("2.10.6", "2.11.11", "2.12.3", "2.13.0-M2"),
+    crossScalaVersions := Seq(scala212, scala213),
     libraryDependencies ++= Seq(
       "org.scala-sbt" % "test-interface" % "1.0" % "provided",
-      "org.testng" % "testng" % testngVersion.value % "provided"))
+      "org.testng" % "testng" % testngVersion.value % "provided")
+  )
 
-lazy val testNGPlugin = Project(id = "sbt-testng-plugin", base = file("plugin"))
-  .enablePlugins(BuildInfoPlugin)
-  .settings(scriptedSettings)
-  .settings(commonSettings: _*)
+lazy val `sbt-testng-plugin` = (project in file("plugin"))
+  .enablePlugins(BuildInfoPlugin, SbtPlugin)
   .settings(
-    preCompiledInterfaceVersions := (crossScalaVersions in root).value.map(
+    preCompiledInterfaceVersions := (`sbt-testng-interface` / crossScalaVersions).value.map(
       CrossVersion.binaryScalaVersion(_)
     ),
     buildInfoKeys := Seq[BuildInfoKey](
@@ -30,26 +38,72 @@ lazy val testNGPlugin = Project(id = "sbt-testng-plugin", base = file("plugin"))
     ),
     buildInfoObject := "TestNGPluginBuildInfo",
     buildInfoPackage := "de.johoop.testngplugin",
-    sbtPlugin := true,
     version := v,
     scriptedBufferLog := false,
     scriptedLaunchOpts ++= sys.process.javaVmArguments.filter(
       a => Seq("-Xmx", "-Xms", "-XX", "-Dsbt.log.noformat").exists(a.startsWith)
     ),
     scriptedLaunchOpts += ("-Dplugin.version=" + version.value),
-    scalacOptions += "-language:_")
+    scalacOptions += "-language:_"
+  )
 
-lazy val commonSettings: Seq[Setting[_]] = publishSettings ++ Seq(
-  crossSbtVersions := Seq("0.13.17", "1.0.0"),
-  organization := "de.johoop",
-  testngVersion := "6.11",
-  scalacOptions ++= Seq("-unchecked", "-deprecation"))
-
-lazy val publishSettings: Seq[Setting[_]] = Seq(
-  bintrayOrganization := Some("sbt"),
-  bintrayRepository := "sbt-plugin-releases",
-  bintrayPackage := "sbt-testng-plugin-imported",
-  publishArtifact in Test := false,
-  publishMavenStyle := false,
-  licenses += ("BSD", url("http://opensource.org/licenses/BSD-3-Clause"))
+ThisBuild / scmInfo := Some(
+  ScmInfo(
+    url(s"https://github.com/$repoSlug"),
+    s"scm:git@github.com:sbt/$repoSlug.git"
+  )
+)
+ThisBuild / developers := List(
+  Developer(
+    id = "jmhofer",
+    name = "Joachim Hofer",
+    email = "@jmhofer",
+    url = url("http://github.com/jmhofer"),
+  ),
+  Developer(
+    id = "asflierl",
+    name = "Andreas Flierl",
+    email = "@asflierl",
+    url = url("http://github.com/asflierl"),
+  ),
+  Developer(
+    id = "xuwei-k",
+    name = "Kenji Yoshida",
+    email = "@xuwei-k",
+    url = url("http://github.com/xuwei-k"),
+  ),
+)
+ThisBuild / description := "sbt testing interface for TestNG"
+ThisBuild / homepage := Some(url(s"https://github.com/$repoSlug"))
+ThisBuild / githubWorkflowBuild := Seq(
+  WorkflowStep.Sbt(
+    List(
+      "+sbt-testng-interface/test",
+      "+sbt-testng-interface/publishLocal",
+      "+sbt-testng-plugin/test",
+      "+sbt-testng-plugin/scripted"
+    )
+  )
+)
+ThisBuild / githubWorkflowTargetTags ++= Seq("v**")
+ThisBuild / githubWorkflowPublishTargetBranches :=
+  Seq(
+    RefPredicate.StartsWith(Ref.Tag("v"))
+  )
+ThisBuild / githubWorkflowPublish := Seq(
+  WorkflowStep.Sbt(
+    commands = List("ci-release"),
+    name = Some("Publish project"),
+    env = Map(
+      "PGP_PASSPHRASE" -> "${{ secrets.PGP_PASSPHRASE }}",
+      "PGP_SECRET" -> "${{ secrets.PGP_SECRET }}",
+      "SONATYPE_PASSWORD" -> "${{ secrets.SONATYPE_PASSWORD }}",
+      "SONATYPE_USERNAME" -> "${{ secrets.SONATYPE_USERNAME }}"
+    )
+  )
+)
+ThisBuild / githubWorkflowOSes := Seq("ubuntu-latest", "macos-latest", "windows-latest")
+ThisBuild / githubWorkflowPublishJavaVersion := JavaSpec.zulu("8")
+ThisBuild / githubWorkflowJavaVersions := Seq(
+  JavaSpec.zulu("8")
 )
