@@ -154,7 +154,7 @@ ThisBuild / githubWorkflowPublish := Seq(
   )
 )
 ThisBuild / githubWorkflowOSes := Seq("ubuntu-latest", "macos-latest", "windows-latest")
-ThisBuild / githubWorkflowPublishJavaVersion := JavaSpec.zulu("8")
+ThisBuild / githubWorkflowPublishJavaVersion := JavaSpec.temurin("17")
 ThisBuild / githubWorkflowJavaVersions := Seq(
-  JavaSpec.zulu("8")
+  JavaSpec.temurin("17")
 )
