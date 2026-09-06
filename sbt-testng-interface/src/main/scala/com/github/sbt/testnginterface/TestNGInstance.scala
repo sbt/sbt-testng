@@ -40,7 +40,7 @@ class TestNGInstance private (loggers: Array[Logger]) {
     TestNGInstance.this
   }
 
-  def using(testOptions: Array[String]): TestNGInstance = {
+  def withOptions(testOptions: Array[String]): TestNGInstance = {
     val args = new CommandLineArgs()
     new JCommander(args, testOptions:_*) // args is an output parameter of the constructor!
     ConfigurableTestNG configure args
@@ -48,7 +48,7 @@ class TestNGInstance private (loggers: Array[Logger]) {
   }
 
   def storingEventsIn(basket: EventRecorder): TestNGInstance = {
-    ConfigurableTestNG addListener basket
+    ConfigurableTestNG.addListener(basket)
     TestNGInstance.this
   }
 

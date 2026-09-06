@@ -14,7 +14,16 @@ ThisBuild / testngVersion := "6.11"
 ThisBuild / scalaVersion := scala212
 ThisBuild / dynverSonatypeSnapshots := true
 
-lazy val `sbt-testng-interface` = (project in file("."))
+lazy val root = (project in file("."))
+  .aggregate(`sbt-testng-interface`, `sbt-testng-plugin`)
+  .settings(
+    name := "sbt-testng root",
+    crossScalaVersions := Nil,
+    publish / skip := true,
+    publishLocal / skip := true,
+  )
+
+lazy val `sbt-testng-interface` = (project in file("sbt-testng-interface"))
   .settings(
     name := interfaceName,
     crossScalaVersions := Seq(scala212, scala213, scala3),

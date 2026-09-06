@@ -39,11 +39,10 @@ class TestNGRunner(testClassLoader: ClassLoader, loggers: Array[Logger], state: 
     loggers foreach (_.debug("running for " + testClassname))
 
     if (permissionToExecute.tryAcquire) {
-      start(TestNGInstance loggingTo loggers
-                           loadingClassesFrom testClassLoader
-                           using testOptions
-                           storingEventsIn recorder)
-
+      start(TestNGInstance.loggingTo(loggers)
+                          .loadingClassesFrom(testClassLoader)
+                          .withOptions(testOptions)
+                          .storingEventsIn(recorder))
       testCompletion.countDown()
     }
 
