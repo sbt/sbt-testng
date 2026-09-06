@@ -10,7 +10,7 @@ val repoSlug = "sbt/sbt-testng"
 ThisBuild / licenses += ("BSD", url("http://opensource.org/licenses/BSD-3-Clause"))
 ThisBuild / organization := "com.github.sbt"
 ThisBuild / scalacOptions ++= Seq("-unchecked", "-deprecation")
-ThisBuild / testngVersion := "6.11"
+ThisBuild / testngVersion := "7.12.0"
 ThisBuild / scalaVersion := scala212
 ThisBuild / dynverSonatypeSnapshots := true
 
