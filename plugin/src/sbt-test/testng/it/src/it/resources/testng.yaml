@@ -1,0 +1,5 @@
+name: Foo
+tests:
+- name: Baz
+  classes:
+  - example.ITest1
