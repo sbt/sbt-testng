@@ -34,21 +34,21 @@ import TestNGInstance.start
 
 class TestNGRunner(testClassLoader: ClassLoader, loggers: Array[Logger], state: TestRunState) extends Runner2 {
   import state._
-  
+
   def run(testClassname: String, fingerprint: Fingerprint, eventHandler: EventHandler, testOptions: Array[String]) = {
     loggers foreach (_.debug("running for " + testClassname))
-    
+
     if (permissionToExecute.tryAcquire) {
       start(TestNGInstance loggingTo loggers
-                           loadingClassesFrom testClassLoader 
-                           using testOptions 
+                           loadingClassesFrom testClassLoader
+                           using testOptions
                            storingEventsIn recorder)
-                           
+
       testCompletion.countDown()
     }
-                           
+
     testCompletion.await()
-    
+
     recorder.replayTo(eventHandler, testClassname, loggers)
   }
 }

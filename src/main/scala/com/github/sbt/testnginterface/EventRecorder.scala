@@ -35,17 +35,17 @@ import org.scalatools.testing.Logger
 import ResultEvent._
 
 class EventRecorder extends TestListenerAdapter {
-  private[this] val basket = HashMap[String, List[Event]]()
-  
+  private val basket = HashMap[String, List[Event]]()
+
   override def onTestFailure(result: ITestResult): Unit = store(failure, result)
   override def onTestSkipped(result: ITestResult): Unit = store(skipped, result)
   override def onTestSuccess(result: ITestResult): Unit = store(success, result)
-  
-  private[this] def store(eventFrom: ITestResult => Event, result: ITestResult): Unit = basket synchronized {
+
+  private def store(eventFrom: ITestResult => Event, result: ITestResult): Unit = basket synchronized {
     basket put (classNameOf(result), eventFrom(result) :: basket.getOrElse(classNameOf(result), Nil))
   }
-  
+
   def replayTo(sbt: EventHandler, className: String, loggers: Array[Logger]): Unit = basket synchronized {
     basket remove className getOrElse Nil foreach sbt.handle
-  } 
+  }
 }

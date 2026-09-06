@@ -4,6 +4,7 @@ val preCompiledInterfaceVersions = SettingKey[Seq[String]]("preCompiledInterface
 val interfaceName = "sbt-testng-interface"
 val scala212 = "2.12.21"
 val scala213 = "2.13.18"
+val scala3 = "3.8.4"
 val repoSlug = "sbt/sbt-testng"
 
 ThisBuild / licenses += ("BSD", url("http://opensource.org/licenses/BSD-3-Clause"))
@@ -16,16 +17,29 @@ ThisBuild / dynverSonatypeSnapshots := true
 lazy val `sbt-testng-interface` = (project in file("."))
   .settings(
     name := interfaceName,
-    version := v,
-    crossScalaVersions := Seq(scala212, scala213),
+    crossScalaVersions := Seq(scala212, scala213, scala3),
     libraryDependencies ++= Seq(
       "org.scala-sbt" % "test-interface" % "1.0" % "provided",
-      "org.testng" % "testng" % testngVersion.value % "provided")
+      "org.testng" % "testng" % testngVersion.value % "provided"
+    ),
+    scalacOptions ++= {
+      scalaBinaryVersion.value match {
+        case "2.12" | "2.13" =>
+          Seq(
+            "-Xsource:3",
+            "-release:8",
+            "-deprecation"
+          )
+        case "3" =>
+          Nil
+      }
+    },
   )
 
 lazy val `sbt-testng-plugin` = (project in file("plugin"))
   .enablePlugins(BuildInfoPlugin, SbtPlugin)
   .settings(
+    crossScalaVersions := Seq(scala212, scala3),
     preCompiledInterfaceVersions := (`sbt-testng-interface` / crossScalaVersions).value.map(
       CrossVersion.binaryScalaVersion(_)
     ),
@@ -38,15 +52,43 @@ lazy val `sbt-testng-plugin` = (project in file("plugin"))
     ),
     buildInfoObject := "TestNGPluginBuildInfo",
     buildInfoPackage := "com.github.sbt.testngplugin",
-    version := v,
+    scalacOptions ++= {
+      scalaBinaryVersion.value match {
+        case "2.12" =>
+          Seq(
+            "-Xsource:3",
+            "-release:8",
+            "-deprecation",
+            "-language:_",
+          )
+        case "3" =>
+          Nil
+      }
+    },
+    pluginCrossBuild / sbtVersion := {
+      scalaBinaryVersion.value match {
+        case "2.12" => "1.9.0" // set minimum sbt version
+        case _      => "2.0.0"
+      }
+    },
+    scriptedSbt := {
+      scalaBinaryVersion.value match {
+        case "2.12" => "1.13.0"
+        case _      => (pluginCrossBuild / sbtVersion).value
+      }
+    },
     scriptedBufferLog := false,
     scriptedLaunchOpts ++= sys.process.javaVmArguments.filter(
       a => Seq("-Xmx", "-Xms", "-XX", "-Dsbt.log.noformat").exists(a.startsWith)
     ),
     scriptedLaunchOpts += ("-Dplugin.version=" + version.value),
-    scalacOptions += "-language:_"
   )
 
+ThisBuild / version := {
+  val orig = (ThisBuild / version).value
+  if (orig.endsWith("-SNAPSHOT")) v
+  else orig
+}
 ThisBuild / scmInfo := Some(
   ScmInfo(
     url(s"https://github.com/$repoSlug"),

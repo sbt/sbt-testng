@@ -39,19 +39,19 @@ class TestNGInstance private (loggers: Array[Logger]) {
     ConfigurableTestNG addClassLoader testClassLoader
     TestNGInstance.this
   }
-  
+
   def using(testOptions: Array[String]): TestNGInstance = {
     val args = new CommandLineArgs()
     new JCommander(args, testOptions:_*) // args is an output parameter of the constructor!
     ConfigurableTestNG configure args
     TestNGInstance.this
   }
-  
+
   def storingEventsIn(basket: EventRecorder): TestNGInstance = {
     ConfigurableTestNG addListener basket
     TestNGInstance.this
   }
-  
+
   private object ConfigurableTestNG extends TestNG { // the TestNG method we need is protected
     override def configure(args: CommandLineArgs) = super.configure(args)
   }
