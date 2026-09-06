@@ -24,28 +24,13 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package de.johoop.testnginterface
+package com.github.sbt.testnginterface
 
-import org.scalatools.testing.Event
-import org.testng.ITestResult
-import org.testng.TestListenerAdapter
-import collection.mutable.HashMap
-import org.scalatools.testing.EventHandler
-import org.scalatools.testing.Logger
-import ResultEvent._
+import java.util.concurrent.Semaphore
+import java.util.concurrent.CountDownLatch
 
-class EventRecorder extends TestListenerAdapter {
-  private[this] val basket = HashMap[String, List[Event]]()
-  
-  override def onTestFailure(result: ITestResult): Unit = store(failure, result)
-  override def onTestSkipped(result: ITestResult): Unit = store(skipped, result)
-  override def onTestSuccess(result: ITestResult): Unit = store(success, result)
-  
-  private[this] def store(eventFrom: ITestResult => Event, result: ITestResult): Unit = basket synchronized {
-    basket put (classNameOf(result), eventFrom(result) :: basket.getOrElse(classNameOf(result), Nil))
-  }
-  
-  def replayTo(sbt: EventHandler, className: String, loggers: Array[Logger]): Unit = basket synchronized {
-    basket remove className getOrElse Nil foreach sbt.handle
-  } 
+class TestRunState {
+  val permissionToExecute = new Semaphore(1)
+  val testCompletion = new CountDownLatch(1)
+  val recorder = new EventRecorder
 }
