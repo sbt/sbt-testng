@@ -59,22 +59,21 @@ object TestNGPlugin extends AutoPlugin {
   import autoImport._
 
   private[this] lazy val testngSources: Array[Byte] = {
-    val artifactId = TestNGPluginBuildInfo.interfaceName + "_2.12"
-    val src = url(s"https://repo.scala-sbt.org/scalasbt/sbt-plugin-releases/${TestNGPluginBuildInfo.organization}/${artifactId}/${TestNGPluginBuildInfo.version}/srcs/${artifactId}-sources.jar")
-    IO.withTemporaryDirectory { dir =>
-      val f = dir / "temp.jar"
-      sbt.io.Using.urlInputStream(src) { in =>
-        IO.transfer(in, f)
-      }
-      IO.readBytes(f)
-    }
+    sys.error("unsupported")
+    // val artifactId = TestNGPluginBuildInfo.interfaceName + "_2.12"
+    // val src = url(s"https://repo.scala-sbt.org/scalasbt/sbt-plugin-releases/${TestNGPluginBuildInfo.organization}/${artifactId}/${TestNGPluginBuildInfo.version}/srcs/${artifactId}-sources.jar")
+    // IO.withTemporaryDirectory { dir =>
+    //   val f = dir / "temp.jar"
+    //   sbt.io.Using.urlInputStream(src) { in =>
+    //     IO.transfer(in, f)
+    //   }
+    //   IO.readBytes(f)
+    // }
   }
 
   override def requires = plugins.JvmPlugin
 
   override lazy val projectSettings: Seq[Def.Setting[_]] = Seq(
-	resolvers += Resolver.sbtPluginRepo("releases"), // why is that necessary, and why like that?
-
     testNGVersion := (testNGVersion ?? TestNGPluginBuildInfo.testngVersion).value,
     testNGSnakeyamlVersion := (testNGSnakeyamlVersion ?? "1.17").value,
     testNGInterfaceVersion := (testNGInterfaceVersion ?? TestNGPluginBuildInfo.version).value,
