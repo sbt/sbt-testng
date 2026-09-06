@@ -73,8 +73,6 @@ object TestNGPlugin extends AutoPlugin {
   override def requires = plugins.JvmPlugin
 
   override lazy val projectSettings: Seq[Def.Setting[_]] = Seq(
-	resolvers += Resolver.sbtPluginRepo("releases"), // why is that necessary, and why like that?
-
     testNGVersion := (testNGVersion ?? TestNGPluginBuildInfo.testngVersion).value,
     testNGSnakeyamlVersion := (testNGSnakeyamlVersion ?? "1.17").value,
     testNGInterfaceVersion := (testNGInterfaceVersion ?? TestNGPluginBuildInfo.version).value,
