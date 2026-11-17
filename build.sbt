@@ -5,6 +5,7 @@ val interfaceName = "sbt-testng-interface"
 val scala212 = "2.12.21"
 val scala213 = "2.13.18"
 val scala3 = "3.8.4"
+val scala3Sbt = "3.9.0"
 val repoSlug = "sbt/sbt-testng"
 
 ThisBuild / licenses += ("BSD", url("http://opensource.org/licenses/BSD-3-Clause"))
@@ -48,7 +49,7 @@ lazy val `sbt-testng-interface` = (project in file("sbt-testng-interface"))
 lazy val `sbt-testng-plugin` = (project in file("plugin"))
   .enablePlugins(BuildInfoPlugin, SbtPlugin)
   .settings(
-    crossScalaVersions := Seq(scala212, scala3),
+    crossScalaVersions := Seq(scala212, scala3Sbt),
     preCompiledInterfaceVersions := (`sbt-testng-interface` / crossScalaVersions).value.map(
       CrossVersion.binaryScalaVersion(_)
     ),
@@ -77,7 +78,7 @@ lazy val `sbt-testng-plugin` = (project in file("plugin"))
     pluginCrossBuild / sbtVersion := {
       scalaBinaryVersion.value match {
         case "2.12" => "1.9.0" // set minimum sbt version
-        case _      => "2.0.0"
+        case _      => "2.1.0"
       }
     },
     scriptedSbt := {
@@ -156,5 +157,5 @@ ThisBuild / githubWorkflowPublish := Seq(
 ThisBuild / githubWorkflowOSes := Seq("ubuntu-latest", "macos-latest", "windows-latest")
 ThisBuild / githubWorkflowPublishJavaVersion := JavaSpec.temurin("17")
 ThisBuild / githubWorkflowJavaVersions := Seq(
-  JavaSpec.temurin("17")
+  JavaSpec.temurin("17"), JavaSpec.temurin("21"), JavaSpec.temurin("25")
 )
